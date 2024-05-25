@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "851852496442",
+    "project_id": "clothess-abced",
+    "storage_bucket": "clothess-abced.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851852496442:android:1afc58da27c02ff1212f03",
+        "android_client_info": {
+          "package_name": "com.example.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBsivA0yDarnlU3kk1tAh_QPT1_hEjQv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

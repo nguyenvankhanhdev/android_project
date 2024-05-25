@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_account"
+        android:icon="@drawable/ic_vector_account"
+        android:title="Profile"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_sidebar"
+        android:icon="@drawable/ic_vector_about"
+        android:title="About"
+        app:showAsAction="always"
+        />
+
+    <item android:id="@+id/action_logout"
+        android:icon="@drawable/ic_vector_logout"
+        android:title="Logout"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_toggle_off"
+        android:icon="@drawable/ic_vector_toggle_off"
+        android:title="Dark"
+        app:showAsAction="always"
+        />
+    <item android:id="@+id/action_toggle_on"
+        android:icon="@drawable/ic_vector_toggle_on"
+        android:title="Light"
+        app:showAsAction="always"
+        />
+</menu>
