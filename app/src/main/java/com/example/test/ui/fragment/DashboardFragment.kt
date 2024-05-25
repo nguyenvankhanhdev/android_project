@@ -22,7 +22,6 @@ import com.example.test.R
 import com.example.test.databinding.FragmentDashboardBinding
 import com.example.test.firestoreclass.FirestoreClass
 import com.example.test.models.Product
-import com.example.test.models.User
 import com.example.test.ui.activities.CartListActivity
 import com.example.test.ui.activities.LoginActivity
 import com.example.test.ui.activities.ProductDetailsActivity

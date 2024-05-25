@@ -10,9 +10,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import java.text.SimpleDateFormat
 import com.example.test.models.Order
 import com.example.test.ui.adapters.CartItemsListAdapter
+import java.text.SimpleDateFormat
 import com.example.test.utils.ClothesTextView
 import com.example.test.utils.ClothesTextViewBold
 import com.example.test.utils.Constants

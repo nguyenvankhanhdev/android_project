@@ -15,8 +15,6 @@ import com.example.test.firestoreclass.FirestoreClass
 import com.example.test.models.User
 import com.example.test.models.UserRole
 import com.example.test.utils.ClothesEditText
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 @Suppress("DEPRECATION")
