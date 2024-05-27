@@ -1,4 +1,10 @@
 <resources>
+
+    <string-array name="price_array">
+        <item>Giảm dần</item>
+        <item>Tăng dần</item>
+    </string-array>
+
     <string name="app_name">Test</string>
     <string name="content_description">image</string>
     <string name="title_login">LOGIN</string>
