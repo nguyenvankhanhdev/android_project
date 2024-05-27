@@ -107,12 +107,11 @@ public class CartItemsListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     HashMap<String, Object> itemHashMap = new HashMap<>();
                     itemHashMap.put(Constants.CART_QUANTITY, String.valueOf(cartQuantity - 1));
 
-                    if (context instanceof CartListActivity) {
-                        ((CartListActivity) context).showProgressDialog(context.getResources().getString(R.string.please_wait));
-                    }
+//                    if (context instanceof CartListActivity) {
+//                        ((CartListActivity) context).showProgressDialog(context.getResources().getString(R.string.please_wait));
+//                    }
 
-                    FirestoreClass firestoreClass = new FirestoreClass();
-                    firestoreClass.updateMyCart(context, model.getId(), itemHashMap);
+                    FirestoreClass.updateMyCart(context, model.getId(), itemHashMap);
                 }
             });
 
@@ -124,12 +123,11 @@ public class CartItemsListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     HashMap<String, Object> itemHashMap = new HashMap<>();
                     itemHashMap.put(Constants.CART_QUANTITY, String.valueOf(cartQuantity + 1));
 
-                    if (context instanceof CartListActivity) {
-                        ((CartListActivity) context).showProgressDialog(context.getResources().getString(R.string.please_wait));
-                    }
+//                    if (context instanceof CartListActivity) {
+//                        ((CartListActivity) context).showProgressDialog(context.getResources().getString(R.string.please_wait));
+//                    }
 
-                    FirestoreClass firestoreClass = new FirestoreClass();
-                    firestoreClass.updateMyCart(context, model.getId(), itemHashMap);
+                    FirestoreClass.updateMyCart(context, model.getId(), itemHashMap);
                 } else {
                     if (context instanceof CartListActivity) {
                         ((CartListActivity) context).showErrorSnackBar(context.getResources().getString(R.string.msg_for_available_stock, model.getStock_quantity()), true);

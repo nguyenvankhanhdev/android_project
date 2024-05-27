@@ -48,7 +48,6 @@ public class CheckoutActivity extends BaseActivity {
     private LinearLayout ll_checkout_place_order;
     private ClothesTextViewBold tv_payment_mode;
     private ClothesButton btn_place_order;
-
     private Address mAddressDetails;
     private User mUserDetails;
     private ArrayList<Product> mProductsList;
@@ -56,7 +55,8 @@ public class CheckoutActivity extends BaseActivity {
     private double mSubTotal = 0.0;
     private double mTotalAmount = 0.0;
     private Order mOrderDetails;
-    private static final String TAG = "FirestoreHelper";
+    private String message;
+    private static double total_amount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +170,8 @@ public class CheckoutActivity extends BaseActivity {
         ll_checkout_place_order.setVisibility(View.VISIBLE);
         double total = subTotal + 10.0;
         tv_checkout_total_amount.setText("$" + total);
-
+        total_amount = total;
+        message = buildHtmlContent(cartList, sizeProductList);
     }
 
     private void placeAnOrder() {
@@ -205,15 +206,14 @@ public class CheckoutActivity extends BaseActivity {
     }
 
     public void userDetailsSuccess(User user) {
-        sendEmail(user);
+        sendEmail(user, message);
     }
 
-    private void sendEmail(User user) {
+    private void sendEmail(User user, String message) {
         String userEmail = user.getEmail();
-        JavaMailAPI javaMailAPI = new JavaMailAPI(this, userEmail, "Confirmation of Order", "Thank you for placing your order. Your order has been confirmed.");
+        JavaMailAPI javaMailAPI = new JavaMailAPI(this, userEmail, "Xác nhận đơn hàng", message);
         javaMailAPI.execute();
     }
-
 
     @Override
     protected void onResume() {
@@ -228,5 +228,66 @@ public class CheckoutActivity extends BaseActivity {
         startActivity(intent);
         finish();
     }
+
+    public static String buildHtmlContent(ArrayList<Cart> cartList, ArrayList<SizeProduct> sizeProductList) {
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append("<html><head><style>")
+                .append("body { font-family: Arial, sans-serif; line-height: 1.6; }")
+                .append(".container { max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }")
+                .append("h1 { color: #4CAF50; text-align: center; border-bottom: 1px solid; padding-bottom: 25px;}")
+                .append(".center { text-align: center; }")
+                .append(".image { width: 150px; border-radius: 10px; }")
+                .append(".content { padding: 10px; }")
+                .append(".justify { text-align: justify; }")
+                .append("table { width: 100%; border-collapse: collapse; margin-top: 20px; }")
+                .append("th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }")
+                .append("th { background-color: #f2f2f2; color: #333; }")
+                .append("tr:nth-child(even) { background-color: #f9f9f9; }")
+                .append("</style></head><body>")
+                .append("<div class=\"container\">")
+                .append("<h1>Xác nhận đơn hàng</h1>")
+                .append("<p style=\"margin-top: 10px;\">Chào bạn, đơn hàng của bạn đã được xác nhận.</p>")
+                .append("<table style=\"width: 100%;\">")
+                .append("<tr>")
+                .append("<th style=\"width: 150px\">Sản phẩm</th>")
+                .append("<th>Tên sản phẩm</th>")
+                .append("<th>Số lượng</th>")
+                .append("<th>Size</th>")
+                .append("<th>Giá</th>")
+                .append("</tr>");
+
+        for (Cart cartItem : cartList) {
+            String imageUrl = cartItem.getImage();
+            int quantity = Integer.parseInt(cartItem.getCart_quantity());
+            int price = Integer.parseInt(cartItem.getPrice());
+            String nameProduct = cartItem.getTitle();
+            String size = cartItem.getSize();
+
+            htmlBuilder.append("<tr>")
+                    .append("<td><img src=\"").append(imageUrl).append("\" alt=\"Product Image\" class=\"image\"></td>")
+                    .append("<td>").append(nameProduct).append("</td>")
+                    .append("<td>").append(quantity).append("</td>")
+                    .append("<td>").append(size).append("</td>")
+                    .append("<td>").append(String.format("%d", price)).append("$</td>")
+                    .append("</tr>");
+        }
+
+
+        htmlBuilder.append("<tr>")
+                .append("<td colspan=\"5\">")
+                .append("<div style=\"float: right;\">")
+                .append("<b>")
+                .append("Tổng tiền: ").append(total_amount)
+                .append("$</b>")
+                .append("</div>")
+                .append("</td>")
+                .append("</tr>")
+                .append("</table>")
+                .append("<p> Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xác nhận, đơn hàng sẽ được vận chuyển tối đa trong vòng 10 ngày, mọi thắc mắc xin liên hệ hotline: <a href=\"tel:+0329951368\">0329951368</a> để được hỗ trợ sớm nhất. Chúc quý khách có một ngày tốt lành.</p>")
+                .append("</div></body></html>");
+
+        return htmlBuilder.toString();
+    }
+
 }
 

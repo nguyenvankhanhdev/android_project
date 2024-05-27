@@ -431,10 +431,8 @@ public class FirestoreClass {
                 });
     }
 
-
-    // Phương thức lấy các sản phẩm có checked = true
     public static void getSelectedCartList(Activity activity) {
-        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance(); // Ensure the Firestore instance is initialized
+        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
         mFireStore.collection(Constants.CART_ITEMS)
                 .whereEqualTo(Constants.USER_ID, getCurrentUserID())
                 .whereEqualTo("checked", true)
@@ -448,7 +446,6 @@ public class FirestoreClass {
                         cartList.add(cartItem);
                     }
 
-                    // Get the list of size products
                     mFireStore.collection(Constants.SIZE_PRODUCTS)
                             .get()
                             .addOnSuccessListener(sizeDocument -> {
@@ -458,10 +455,9 @@ public class FirestoreClass {
                                     sizeProductList.add(sizeProduct);
                                 }
 
-                                // Callback to activity
                                 if (activity instanceof CheckoutActivity) {
                                     ((CheckoutActivity) activity).successCartItemsList(cartList, sizeProductList);
-                                }
+                                    ((CheckoutActivity) activity).buildHtmlContent(cartList, sizeProductList);                                }
                             })
                             .addOnFailureListener(e -> {
                                 if (activity instanceof CheckoutActivity) {
@@ -590,7 +586,6 @@ public class FirestoreClass {
         FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
         WriteBatch writeBatch = mFireStore.batch();
 
-        // Prepare the sold product details
         for (Cart cart : cartList) {
             SoldProduct soldProduct = new SoldProduct(
                     FirestoreClass.getCurrentUserID(),
