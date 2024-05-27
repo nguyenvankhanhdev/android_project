@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,11 +39,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
@@ -51,6 +55,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +71,7 @@ public class FirestoreClass {
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener(aVoid -> activity.userRegistrationSuccess())
         .addOnFailureListener(e -> {
-            activity.hideProgressDialog();
+          activity.hideProgressDialog();
             Log.e(activity.getClass().getSimpleName(), "Error while registering the user.", e);
         });
     }
@@ -79,7 +84,7 @@ public class FirestoreClass {
         return currentUserID;
     }
 
-    public void getUserDetails(Activity activity) {
+    public static void getUserDetails(Activity activity) {
         mFireStore.collection(Constants.USERS)
                 .document(getCurrentUserID())
                 .get()
@@ -101,6 +106,8 @@ public class FirestoreClass {
                             ((LoginActivity) activity).userLoggedInSuccess(user);
                         } else if (activity instanceof SettingsActivity) {
                             ((SettingsActivity) activity).userDetailsSuccess(user);
+                        } else if(activity instanceof CheckoutActivity) {
+                            ((CheckoutActivity) activity).userDetailsSuccess(user);
                         }
                     }
                 })
@@ -109,6 +116,8 @@ public class FirestoreClass {
                         ((LoginActivity) activity).hideProgressDialog();
                     } else if (activity instanceof SettingsActivity) {
                         ((SettingsActivity) activity).hideProgressDialog();
+                    } else if(activity instanceof CheckoutActivity) {
+                        ((CheckoutActivity) activity).hideProgressDialog();
                     }
                     Log.e(
                             activity.getClass().getSimpleName(),
@@ -230,11 +239,11 @@ public class FirestoreClass {
             Log.e(fragment.getClass().getSimpleName(), document.getDocuments().toString());
             ArrayList<Product> productsList = new ArrayList<>();
             for (DocumentSnapshot i : document.getDocuments()) {
-            Product product = i.toObject(Product.class);
-            assert product != null;
-            product.setProduct_id(i.getId());
-            productsList.add(product);
-        }
+                Product product = i.toObject(Product.class);
+                assert product != null;
+                product.setProduct_id(i.getId());
+                productsList.add(product);
+            }
             fragment.successDashboardItemsList(productsList);
         })
         .addOnFailureListener(e -> {
@@ -253,35 +262,6 @@ public class FirestoreClass {
         });
     }
 
-    public void updateSizeProductQuantities(String productId, Map<String, Integer> sizeQuantityMap, final Callback callback) {
-        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
-        WriteBatch batch = mFireStore.batch();
-        CollectionReference sizeProductsRef = mFireStore.collection(Constants.SIZE_PRODUCTS);
-
-        for (Map.Entry<String, Integer> entry : sizeQuantityMap.entrySet()) {
-            String size = entry.getKey();
-            int quantity = entry.getValue();
-
-            DocumentReference sizeProductRef = sizeProductsRef.document(productId + "-" + size);
-            SizeProduct sizeProduct = new SizeProduct();
-            sizeProduct.setSize(Integer.parseInt(size));
-            sizeProduct.setQuantity(quantity);
-            sizeProduct.setProduct_id(productId);
-
-            batch.set(sizeProductRef, sizeProduct, SetOptions.merge());
-        }
-
-        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(Task<Void> task) {
-                if (task.isSuccessful()) {
-                    callback.onCallback(true);
-                } else {
-                    callback.onCallback(false);
-                }
-            }
-        });
-    }
     public void getProductDetails(ProductDetailsActivity activity, String productId) {
         FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
 
@@ -332,22 +312,51 @@ public class FirestoreClass {
                     }
                 });
     }
-    public interface Callback {
-        void onCallback(boolean success);
-    }
 
     public void addCartItems(ProductDetailsActivity activity, Cart addToCart) {
         mFireStore.collection(Constants.CART_ITEMS)
-            .document()
-            .set(addToCart, SetOptions.merge())
-            .addOnSuccessListener(documentReference -> {
-            activity.addToCartSuccess();
-        })
-        .addOnFailureListener(e -> {
-            activity.hideProgressDialog();
-            Log.e(activity.getClass().getSimpleName(), "Error while creating the document for cart item.", e);
-        });
+                .whereEqualTo("user_id", addToCart.getUser_id())
+                .whereEqualTo("product_id", addToCart.getProduct_id())
+                .whereEqualTo("size", addToCart.getSize())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            Cart existingCartItem = document.toObject(Cart.class);
+                            if (existingCartItem != null) {
+                                int newQuantity = Integer.parseInt(existingCartItem.getCart_quantity()) + 1;
+                                existingCartItem.setCart_quantity(String.valueOf(newQuantity));
+                                mFireStore.collection(Constants.CART_ITEMS)
+                                        .document(document.getId())
+                                        .set(existingCartItem, SetOptions.merge())
+                                        .addOnSuccessListener(aVoid -> {
+                                            activity.addToCartSuccess();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            activity.hideProgressDialog();
+                                            Log.e(activity.getClass().getSimpleName(), "Error while updating the document for cart item.", e);
+                                        });
+                            }
+                        }
+                    } else {
+                        mFireStore.collection(Constants.CART_ITEMS)
+                                .document()
+                                .set(addToCart, SetOptions.merge())
+                                .addOnSuccessListener(documentReference -> {
+                                    activity.addToCartSuccess();
+                                })
+                                .addOnFailureListener(e -> {
+                                    activity.hideProgressDialog();
+                                    Log.e(activity.getClass().getSimpleName(), "Error while creating the document for cart item.", e);
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    activity.hideProgressDialog();
+                    Log.e(activity.getClass().getSimpleName(), "Error while checking the document for cart item.", e);
+                });
     }
+
     public void checkIfItemExistInCart(ProductDetailsActivity activity, String productId) {
         mFireStore.collection(Constants.CART_ITEMS)
             .whereEqualTo(Constants.USER_ID, getCurrentUserID())
@@ -709,5 +718,48 @@ public class FirestoreClass {
                     Log.e(TAG, "Error getting documents: ", e);
                 });
     }
+
+    public static void getType(Callback<List<Pair<String, String>>> callback) {
+        mFireStore.collection("shoe_type")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Pair<String, String>> types = new ArrayList<>();
+                    for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                        String typeName = document.getString("type_name");
+                        String typeId = document.getId();
+                        if (typeName != null) {
+                            types.add(new Pair<>(typeName, typeId));
+                        }
+                    }
+                    callback.onResult(types);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirestoreClass", "Error while getting types.", e);
+                    callback.onResult(new ArrayList<>());
+                });
+    }
+
+    public static void getTypeNameById(String typeId, Callback<String> callback) {
+        mFireStore.collection("shoe_type")
+                .document(typeId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String typeName = documentSnapshot.getString("type_name");
+                        callback.onResult(typeName);
+                    } else {
+                        callback.onResult(null);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirestoreClass", "Error while getting type name.", e);
+                    callback.onResult(null);
+                });
+    }
+
+    public interface Callback<T> {
+        void onResult(T result);
+    }
+
 
 }

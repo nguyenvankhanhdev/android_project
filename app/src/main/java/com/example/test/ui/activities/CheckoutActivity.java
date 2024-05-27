@@ -17,11 +17,13 @@ import com.example.test.models.Cart;
 import com.example.test.models.Order;
 import com.example.test.models.Product;
 import com.example.test.models.SizeProduct;
+import com.example.test.models.User;
 import com.example.test.ui.adapters.CartItemsListAdapter;
 import com.example.test.utils.ClothesButton;
 import com.example.test.utils.ClothesTextView;
 import com.example.test.utils.ClothesTextViewBold;
 import com.example.test.utils.Constants;
+import com.example.test.utils.JavaMailAPI;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,6 +50,7 @@ public class CheckoutActivity extends BaseActivity {
     private ClothesButton btn_place_order;
 
     private Address mAddressDetails;
+    private User mUserDetails;
     private ArrayList<Product> mProductsList;
     private ArrayList<Cart> mCartItemsList;
     private double mSubTotal = 0.0;
@@ -128,6 +131,8 @@ public class CheckoutActivity extends BaseActivity {
         getCartItemsList();
     }
 
+
+
     private void getCartItemsList() {
         FirestoreClass.getSelectedCartList(this);
     }
@@ -190,7 +195,25 @@ public class CheckoutActivity extends BaseActivity {
         for (Cart cartItem : mCartItemsList) {
             FirestoreClass.updateSizeProductQuantity(cartItem.getProduct_id(), Integer.parseInt(cartItem.getSize()), Integer.parseInt(cartItem.getCart_quantity()));
         }
+
+        getUserDetailsAndSendEmail();
+
     }
+
+    private void getUserDetailsAndSendEmail() {
+        FirestoreClass.getUserDetails(this);
+    }
+
+    public void userDetailsSuccess(User user) {
+        sendEmail(user);
+    }
+
+    private void sendEmail(User user) {
+        String userEmail = user.getEmail();
+        JavaMailAPI javaMailAPI = new JavaMailAPI(this, userEmail, "Confirmation of Order", "Thank you for placing your order. Your order has been confirmed.");
+        javaMailAPI.execute();
+    }
+
 
     @Override
     protected void onResume() {
@@ -205,6 +228,5 @@ public class CheckoutActivity extends BaseActivity {
         startActivity(intent);
         finish();
     }
-
 }
 

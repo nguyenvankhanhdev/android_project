@@ -36,6 +36,7 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
     private Product mProductDetails;
     private Cart mCartItem;
     private String mProductId;
+    private TextView tv_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
         tv_product_details_available_quantity = findViewById(R.id.tv_product_details_available_quantity);
         btn_go_to_cart = findViewById(R.id.btn_go_to_cart);
         spinner_product_size = findViewById(R.id.spinner_product_size);
+        tv_type = findViewById(R.id.tv_type);
 
         if (getIntent().hasExtra(Constants.EXTRA_PRODUCT_ID)) {
             mProductId = getIntent().getStringExtra(Constants.EXTRA_PRODUCT_ID);
@@ -99,6 +101,7 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
                 mProductDetails.getImage(),
                 true,
                 Constants.DEFAULT_CART_QUANTITY,
+                tv_product_details_available_quantity.getText().toString(),
                 selectedSize
         );
         showProgressDialog(getResources().getString(R.string.please_wait));
@@ -131,6 +134,22 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
         ArrayAdapter<String> adapter = new ArrayAdapter<>(ProductDetailsActivity.this, android.R.layout.simple_spinner_item, sizeList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_product_size.setAdapter(adapter);
+        FirestoreClass.getTypeNameById(product.getShoeTypeId(), new FirestoreClass.Callback<String>() {
+            @Override
+            public void onResult(String typeName) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (typeName != null) {
+                            tv_type.setText(typeName);
+                        } else {
+                            tv_type.setText("Unknown Type");
+                        }
+                    }
+                });
+            }
+        });
+
         spinner_product_size.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

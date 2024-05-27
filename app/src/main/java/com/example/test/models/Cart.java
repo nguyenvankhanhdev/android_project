@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 public class Cart implements Parcelable {
 
-
     private String user_id;
     private String product_id;
     private String title;
@@ -39,7 +38,7 @@ public class Cart implements Parcelable {
         this.size = selectedSize;
     }
 
-    public Cart(String currentUserID, String mProductId, String title, String price, String image, boolean isChecked, String defaultCartQuantity, String selectedSize) {
+    public Cart(String currentUserID, String mProductId, String title, String price, String image, boolean isChecked,  String defaultCartQuantity, String stock_quantity, String selectedSize) {
         this.user_id = currentUserID;
         this.product_id = mProductId;
         this.title = title;
@@ -47,6 +46,7 @@ public class Cart implements Parcelable {
         this.image = image;
         this.isChecked = isChecked;
         this.cart_quantity = defaultCartQuantity;
+        this.stock_quantity = stock_quantity;
         this.size = selectedSize;
     }
 

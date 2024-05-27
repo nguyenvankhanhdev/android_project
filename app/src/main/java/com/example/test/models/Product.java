@@ -10,6 +10,10 @@ public class Product implements Parcelable {
     private String description;
     private String image;
 
+
+
+    private String shoeTypeId;
+
     public Product() {
     }
 
@@ -84,6 +88,14 @@ public class Product implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public String getShoeTypeId() {
+        return shoeTypeId;
+    }
+
+    public void setShoeTypeId(String shoeTypeId) {
+        this.shoeTypeId = shoeTypeId;
     }
 
     @Override
