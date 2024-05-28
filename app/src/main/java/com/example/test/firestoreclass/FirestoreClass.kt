@@ -36,6 +36,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
+
 class FirestoreClass {
     private val mFireStore = FirebaseFirestore.getInstance()
     fun registerUser(activity: RegisterActivity, userInfo: User) {
@@ -692,4 +693,56 @@ class FirestoreClass {
                 callback(null)
             }
     }
+
+    interface FirestoreCallback {
+        fun onCallback(products: List<Product>)
+    }
+    //Thống kê
+
+
+    fun getAllIdProduct(callback: FirestoreCallback) {
+        val mFireStore = FirebaseFirestore.getInstance()
+        mFireStore.collection(Constants.PRODUCTS)
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e("FirestoreClass", document.documents.toString())
+                val list: ArrayList<Product> = ArrayList()
+                for (documents in document) {
+                    val productId = documents.getString(Constants.PRODUCT_ID)
+                    val productName = documents.getString("title")
+                    if (productId != null && productName != null) {
+                        list.add(Product(productId, productName))
+                    }
+                }
+                callback.onCallback(list)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreClass", "Error getting documents: ", exception)
+                callback.onCallback(emptyList()) // Trả về danh sách rỗng khi thất bại
+            }
+    }
+    interface FirestoreSLCallback {
+        fun onCallback(totalQuantity: Int)
+    }
+    fun getSLTungSP(productID: String, callback: FirestoreSLCallback) {
+        mFireStore.collection(Constants.ORDERS)
+            .get()
+            .addOnSuccessListener { documents ->
+                var totalQuantity = 0
+                for (document in documents) {
+                    val order = document.toObject(Order::class.java)
+                    for (item in order.items) {
+                        if (item.product_id == productID) {
+                            totalQuantity += item.cart_quantity.toInt()
+                        }
+                    }
+                }
+                callback.onCallback(totalQuantity)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreClass", "Error getting documents: ", exception)
+                callback.onCallback(0) // Trả về 0 khi thất bại
+            }
+    }
+
 }

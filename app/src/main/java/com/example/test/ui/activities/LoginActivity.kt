@@ -15,6 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import com.example.test.R
 import com.example.test.firestoreclass.FirestoreClass
 import com.example.test.models.User
+import com.example.test.models.UserRole
 import com.example.test.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
 
@@ -93,8 +94,15 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             intent.putExtra(Constants.EXTRA_USER_DETAILS, user)
             intent.putExtra(Constants.USER_ROLE, user.role)
         } else {
-            intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+            if (user.role == UserRole.ADMIN.name) {
+                intent = Intent(this@LoginActivity, AdminActivity::class.java)
+            }
+            else
+            {
+                intent = Intent(this@LoginActivity, DashboardActivity::class.java)
+            }
             intent.putExtra(Constants.USER_ROLE, user.role)
+
 
         }
         startActivity(intent)

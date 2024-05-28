@@ -70,6 +70,8 @@
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="title_dashboard">Trang Chủ</string>
     <string name="title_products">Sản Phẩm</string>
+    <string name="title_statistical">Thống Kê</string>
+    <string name="title_user">Người Dùng</string>
     <string name="title_orders">Đặt Hàng</string>
     <string name="please_click_back_again_to_exit">Please click back again to exit.</string>
     <string name="title_home">Home</string>
