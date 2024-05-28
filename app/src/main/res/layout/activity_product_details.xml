@@ -175,7 +175,9 @@
                     android:background="@drawable/item_grey_border_background"
                     android:paddingStart="@dimen/product_details_stock_quantity_paddingStartEnd"
                     android:paddingEnd="@dimen/product_details_stock_quantity_paddingStartEnd"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:gravity="center|left"
+                    android:text="Boot"/>
             </LinearLayout>
 
             <LinearLayout

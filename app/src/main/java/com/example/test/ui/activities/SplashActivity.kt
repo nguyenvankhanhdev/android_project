@@ -28,7 +28,7 @@ class SplashActivity : AppCompatActivity() {
         }
         Handler().postDelayed(
             {
-                val currentUserID = FirestoreClass().getCurrentUserID()
+                val currentUserID = FirestoreClass.getCurrentUserID()
                 if (currentUserID.isNotEmpty()) {
                     startActivity(Intent(this@SplashActivity, DashboardActivity::class.java))
                 } else {
