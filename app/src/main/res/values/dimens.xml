@@ -114,7 +114,7 @@
 
 
     <dimen name="cart_item_marginTop">16dp</dimen>
-    <dimen name="cart_item_paddingStartEnd">16dp</dimen>
+    <dimen name="cart_item_paddingStartEnd">5dp</dimen>
     <dimen name="cart_item_paddingTopBottom">12dp</dimen>
     <dimen name="cart_item_image_padding">2dp</dimen>
     <dimen name="cart_item_image_width">80dp</dimen>

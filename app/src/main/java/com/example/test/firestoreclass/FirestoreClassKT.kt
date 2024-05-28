@@ -31,13 +31,14 @@ import com.example.test.ui.fragment.ProductsFragment
 import com.example.test.ui.fragment.SoldProductsFragment
 import com.example.test.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 
-class FirestoreClass {
+class FirestoreClassKT {
     private val mFireStore = FirebaseFirestore.getInstance()
     fun registerUser(activity: RegisterActivity, userInfo: User) {
         mFireStore.collection(Constants.USERS)
@@ -553,9 +554,13 @@ class FirestoreClass {
     }
     fun updateAllDetails(activity: CheckoutActivity, cartList: ArrayList<Cart>, order: Order) {
         val writeBatch = mFireStore.batch()
+        val documentReference: DocumentReference = mFireStore.collection(Constants.SOLD_PRODUCTS).document()
+        val newSoldProductrId = documentReference.id
         for (cart in cartList) {
+
             val soldProduct = SoldProduct(
-                FirestoreClass().getCurrentUserID(),
+
+                FirestoreClassKT().getCurrentUserID(),
                 cart.title,
                 cart.price,
                 cart.cart_quantity,
@@ -566,7 +571,8 @@ class FirestoreClass {
                 order.sub_total_amount,
                 order.shipping_charge,
                 order.total_amount,
-                order.address
+                order.address,
+                newSoldProductrId
             )
             val documentReference = mFireStore.collection(Constants.SOLD_PRODUCTS)
                 .document()
@@ -744,5 +750,7 @@ class FirestoreClass {
                 callback.onCallback(0) // Trả về 0 khi thất bại
             }
     }
+
+
 
 }

@@ -116,7 +116,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        FirestoreClass().getUserDetails(this@LoginActivity)
+                        FirestoreClass.getUserDetails(this@LoginActivity)
                     } else {
                         Log.e("Login Error", "Failed to sign in: ${task.exception?.message}")
                         hideProgressDialog()

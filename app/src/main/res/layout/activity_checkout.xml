@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--TODO Step 3: Design the screen layout.-->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,8 +12,10 @@
         android:id="@+id/toolbar_checkout_activity"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/app_gradient_color_background">
+        android:background="@drawable/app_gradient_color_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/tv_title"
@@ -30,11 +32,15 @@
     </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar_checkout_activity"
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:fillViewport="true"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_checkout_activity"
+        app:layout_constraintBottom_toTopOf="@id/ll_checkout_place_order"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -47,7 +53,6 @@
                 android:layout_marginStart="@dimen/checkout_content_marginStartEnd"
                 android:layout_marginTop="@dimen/checkout_content_marginTopBottom"
                 android:layout_marginEnd="@dimen/checkout_content_marginStartEnd"
-
                 android:paddingTop="@dimen/checkout_content_lbl_padding"
                 android:paddingBottom="@dimen/checkout_content_lbl_padding"
                 android:text="@string/checkout_lbl_product_items"
@@ -116,6 +121,15 @@
                     tools:text="XYZ" />
 
                 <com.example.test.utils.ClothesTextView
+                    android:id="@+id/tv_checkout_mobile_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/address_details_marginTop"
+                    android:textColor="@color/item_value_text_color"
+                    android:textSize="@dimen/address_details_textSize"
+                    tools:text="+64 123456789" />
+
+                <com.example.test.utils.ClothesTextView
                     android:id="@+id/tv_checkout_additional_note"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -133,14 +147,6 @@
                     android:textSize="@dimen/address_details_textSize"
                     tools:text="XYZ" />
 
-                <com.example.test.utils.ClothesTextView
-                    android:id="@+id/tv_checkout_mobile_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/address_details_marginTop"
-                    android:textColor="@color/item_value_text_color"
-                    android:textSize="@dimen/address_details_textSize"
-                    tools:text="+64 123456789" />
             </LinearLayout>
 
             <com.example.test.utils.ClothesTextView
@@ -241,15 +247,14 @@
 
     <LinearLayout
         android:id="@+id/ll_checkout_place_order"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:background="@color/colorWhite"
         android:orientation="vertical"
         android:padding="@dimen/ll_checkout_place_order_padding"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -289,10 +294,6 @@
             android:paddingBottom="@dimen/btn_padding"
             android:text="@string/btn_lbl_place_order"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_textSize"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_terms_and_condition" />
-
+            android:textSize="@dimen/btn_textSize" />
     </LinearLayout>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

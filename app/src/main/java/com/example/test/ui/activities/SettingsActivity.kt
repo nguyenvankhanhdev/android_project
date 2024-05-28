@@ -79,7 +79,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
     }
     private fun getUserDetails() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getUserDetails(this@SettingsActivity)
+        FirestoreClass.getUserDetails(this@SettingsActivity)
     }
     fun userDetailsSuccess(user: User) {
         hideProgressDialog()

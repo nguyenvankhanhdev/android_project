@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.SoldProduct
 
 import com.myshoppal.ui.adapters.SoldProductsListAdapter
@@ -30,7 +30,7 @@ class SoldProductsFragment : BaseFragment() {
     }
     private fun getSoldProductsList() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getSoldProductsList(this@SoldProductsFragment)
+        FirestoreClassKT().getSoldProductsList(this@SoldProductsFragment)
     }
     fun successSoldProductsList(soldProductsList: ArrayList<SoldProduct>) {
         hideProgressDialog()

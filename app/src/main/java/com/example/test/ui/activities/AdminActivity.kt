@@ -1,7 +1,6 @@
 package com.example.test.ui.activities
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -10,8 +9,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.test.R
 import com.example.test.databinding.ActivityAdminBinding
-import com.example.test.databinding.ActivityDashboardBinding
-import com.example.test.utils.Constants
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class AdminActivity : BaseActivity() {

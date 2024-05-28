@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.test.R
 import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 
 @Suppress("DEPRECATION")
 class SplashActivity : AppCompatActivity() {
@@ -28,7 +29,7 @@ class SplashActivity : AppCompatActivity() {
         }
         Handler().postDelayed(
             {
-                val currentUserID = FirestoreClass().getCurrentUserID()
+                val currentUserID = FirestoreClass.getCurrentUserID()
                 if (currentUserID.isNotEmpty()) {
                     startActivity(Intent(this@SplashActivity, DashboardActivity::class.java))
                 } else {

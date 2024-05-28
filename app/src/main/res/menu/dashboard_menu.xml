@@ -5,6 +5,7 @@
         android:icon="@drawable/ic_vector_search"
         android:title="@string/action_settings"
         app:showAsAction="always"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         />
     <item android:id="@+id/action_cart"
         android:icon="@drawable/ic_vector_cart"

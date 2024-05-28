@@ -42,7 +42,7 @@ open class AddressListAdapter(
             holder.tv_address_mobile_number.text = model.mobileNumber
             if (selectAddress) {
                 holder.itemView.setOnClickListener {
-                   val intent = Intent(context,CheckoutActivity::class.java)
+                   val intent = Intent(context, CheckoutActivity::class.java)
                     intent.putExtra(Constants.EXTRA_SELECTED_ADDRESS, model)
                     context.startActivity(intent)
                 }
