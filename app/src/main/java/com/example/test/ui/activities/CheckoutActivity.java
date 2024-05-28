@@ -152,25 +152,22 @@ public class CheckoutActivity extends BaseActivity {
         rv_cart_list_items.setHasFixedSize(true);
         CartItemsListAdapter cartListAdapter = new CartItemsListAdapter(this, mCartItemsList, false);
         rv_cart_list_items.setAdapter(cartListAdapter);
-        double subTotal = 0.0;
 
         for (Cart item : mCartItemsList) {
-            if (item.isChecked()) {
-                int availableQuantity = Integer.parseInt(item.getStock_quantity());
-                if (availableQuantity > 0) {
-                    double price = Double.parseDouble(item.getPrice());
-                    int quantity = Integer.parseInt(item.getCart_quantity());
-                    subTotal += (price * quantity);
-                }
+            int availableQuantity = Integer.parseInt(item.getStock_quantity());
+            if (availableQuantity > 0) {
+                double price = Double.parseDouble(item.getPrice());
+                int quantity = Integer.parseInt(item.getCart_quantity());
+                mSubTotal += (price * quantity);
             }
         }
 
-        tv_checkout_sub_total.setText("$" + subTotal);
+        tv_checkout_sub_total.setText("$" + mSubTotal);
         tv_checkout_shipping_charge.setText("$10.0");
         ll_checkout_place_order.setVisibility(View.VISIBLE);
-        double total = subTotal + 10.0;
-        tv_checkout_total_amount.setText("$" + total);
-        total_amount = total;
+        mTotalAmount = mSubTotal + 10.0;
+        tv_checkout_total_amount.setText("$" + mTotalAmount);
+        total_amount = mTotalAmount;
         message = buildHtmlContent(cartList, sizeProductList);
     }
 
@@ -182,14 +179,14 @@ public class CheckoutActivity extends BaseActivity {
                 mAddressDetails,
                 "My order " + System.currentTimeMillis(),
                 mCartItemsList.get(0).getImage(),
-                String.valueOf(mSubTotal),
+                mCartItemsList.get(0).getSize(),
+                Double.toString(mSubTotal),
                 "10.0",
-                String.valueOf(mTotalAmount),
-                String.valueOf(System.currentTimeMillis())
+                Double.toString(mTotalAmount),
+                System.currentTimeMillis()
         );
-        new FirestoreClass().placeOrder(this, mOrderDetails);
+        new FirestoreClass().placeOrder(CheckoutActivity.this, mOrderDetails);
     }
-
 
     public void orderPlacedSuccess() {
         new FirestoreClass().updateAllDetails(this, mCartItemsList, mOrderDetails);

@@ -53,12 +53,25 @@ public class Order implements Parcelable {
         this.address = mAddressDetails;
         this.title = title;
         this.image = image;
-        this.size = size;
         this.sub_total_amount = sub_total_amount;
         this.shipping_charge = shipping_charge;
         this.total_amount = total_amount;
         this.order_datetime = System.currentTimeMillis();
+        this.size = size;
         this.id = "";
+    }
+
+    public Order(String currentUserID, ArrayList<Cart> mCartItemsList, Address mAddressDetails, String title, String image, String size, String sub_total_amount, String shipping_charge, String total_amount, long order_datetime) {
+        this.user_id = currentUserID;
+        this.items = mCartItemsList;
+        this.address = mAddressDetails;
+        this.title = title;
+        this.image = image;
+        this.size = size;
+        this.sub_total_amount = sub_total_amount;
+        this.shipping_charge = shipping_charge;
+        this.total_amount = total_amount;
+        this.order_datetime = order_datetime;
     }
 
     public String getUser_id() {

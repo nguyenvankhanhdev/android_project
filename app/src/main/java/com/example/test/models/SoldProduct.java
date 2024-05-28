@@ -49,7 +49,7 @@ public class SoldProduct implements Parcelable {
         }
     };
 
-    public SoldProduct(String currentUserID, String title, String price, String soldQuantity, String image, String orderId, String size, long orderDate, String subTotalAmount, String shippingCharge, String totalAmount, Address address) {
+    public SoldProduct(String currentUserID, String title, String price, String soldQuantity, String image, String size, String orderId, long orderDate, String subTotalAmount, String shippingCharge, String totalAmount, Address address) {
         this.user_id = currentUserID;
         this.title = title;
         this.price = price;
@@ -63,6 +63,10 @@ public class SoldProduct implements Parcelable {
         this.total_amount = totalAmount;
         this.address = address;
     }
+
+//    public SoldProduct(String currentUserID, String title, String price, String cartQuantity, String image, String size, String title1, long orderDatetime, String subTotalAmount, String shippingCharge, String totalAmount, Address address) {
+//
+//    }
 
     public String getUser_id() {
         return user_id;

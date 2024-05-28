@@ -570,19 +570,27 @@ public class FirestoreClass {
             Log.e(activity.getClass().getSimpleName(), "Error while deleting the address.", e);
         });
     }
-    public void placeOrder(CheckoutActivity activity, Order order) {
-
+    public void placeOrder(final CheckoutActivity activity, Order order) {
         mFireStore.collection(Constants.ORDERS)
-            .document()
-            .set(order, SetOptions.merge())
-            .addOnSuccessListener(aVoid -> activity.orderPlacedSuccess())
-        .addOnFailureListener(e -> {
-            activity.hideProgressDialog();
-            Log.e(activity.getClass().getSimpleName(), "Error while placing an order.", e);
-        });
+                .document()
+                .set(order, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        activity.orderPlacedSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        activity.hideProgressDialog();
+                        Log.e(activity.getClass().getSimpleName(), "Error while placing an order.", e);
+                    }
+                });
     }
 
-    public void updateAllDetails(CheckoutActivity activity, ArrayList<Cart> cartList, Order order) {
+
+    public void updateAllDetails(final CheckoutActivity activity, ArrayList<Cart> cartList, Order order) {
         FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
         WriteBatch writeBatch = mFireStore.batch();
 
@@ -593,8 +601,8 @@ public class FirestoreClass {
                     cart.getPrice(),
                     cart.getCart_quantity(),
                     cart.getImage(),
-                    order.getTitle(),
                     order.getSize(),
+                    order.getId(),
                     order.getOrder_datetime(),
                     order.getSub_total_amount(),
                     order.getShipping_charge(),
@@ -607,18 +615,16 @@ public class FirestoreClass {
             writeBatch.set(documentReference, soldProduct);
         }
 
-        // Update the product stock in the products collection based on cart quantity
-//        for (Cart cart : cartList) {
-//            Map<String, Object> productHashMap = new HashMap<>();
-//            productHashMap.put(Constants.STOCK_QUANTITY, String.valueOf(Integer.parseInt(cart.getStock_quantity()) - Integer.parseInt(cart.getCart_quantity())));
-//
-//            com.google.firebase.firestore.DocumentReference documentReference = mFireStore.collection(Constants.PRODUCTS)
-//                    .document(cart.getProduct_id());
-//
-//            writeBatch.update(documentReference, productHashMap);
-//        }
+        for (Cart cart : cartList) {
+            Map<String, Object> productHashMap = new HashMap<>();
+            productHashMap.put(Constants.STOCK_QUANTITY,
+                    String.valueOf(Integer.parseInt(cart.getStock_quantity()) - Integer.parseInt(cart.getCart_quantity())));
 
-        // Delete the list of cart items
+            DocumentReference documentReference = mFireStore.collection(Constants.PRODUCTS)
+                    .document(cart.getProduct_id());
+            writeBatch.update(documentReference, productHashMap);
+        }
+
         for (Cart cart : cartList) {
             DocumentReference documentReference = mFireStore.collection(Constants.CART_ITEMS)
                     .document(cart.getId());
@@ -632,12 +638,14 @@ public class FirestoreClass {
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(@NonNull Exception e) {
                 activity.hideProgressDialog();
-                Log.e(activity.getClass().getSimpleName(), "Error while updating all the details after order placed.", e);
+                Log.e(activity.getClass().getSimpleName(),
+                        "Error while updating all the details after order placed.", e);
             }
         });
     }
+
     public void getMyOrdersList(OrdersFragment fragment) {
         mFireStore.collection(Constants.ORDERS)
             .whereEqualTo(Constants.USER_ID, getCurrentUserID())
