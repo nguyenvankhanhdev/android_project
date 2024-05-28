@@ -97,7 +97,7 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
             et_email.isEnabled = false
             et_email.setText(mUserDetails.email)
             if (mUserDetails.mobile != 0L) {
-                et_mobile_number.setText(mUserDetails.mobile.toString())
+                et_mobile_number.setText("0" + mUserDetails.mobile.toString())
             }
             if (mUserDetails.gender == Constants.MALE) {
                 rb_male.isChecked = true
