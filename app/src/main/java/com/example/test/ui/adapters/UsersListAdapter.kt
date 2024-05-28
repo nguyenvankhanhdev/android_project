@@ -23,13 +23,10 @@ import com.example.test.utils.Constants
 import com.example.test.utils.GlideLoader
 
 open class UsersListAdapter (
-
     private val context: Context,
     private var list: ArrayList<User>,
     private val fragment: UsersFragment,
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             return MyViewHolder(
                 LayoutInflater.from(context).inflate(

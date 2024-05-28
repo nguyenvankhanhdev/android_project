@@ -16,11 +16,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Product
 import com.example.test.models.SizeProduct
 import com.example.test.utils.Constants
-import com.example.test.utils.Constants.PRODUCT_IMAGE
 import com.example.test.utils.GlideLoader
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -332,7 +331,7 @@ class EditProductActivity : BaseActivity(), View.OnClickListener {
         }
     }
     private fun setSpinnerType() {
-        FirestoreClass().getType { types ->
+        FirestoreClassKT().getType { types ->
             typeList.clear()
             typeList.addAll(types)
             setupSpinner(typeList.map { it.first })
@@ -388,7 +387,7 @@ class EditProductActivity : BaseActivity(), View.OnClickListener {
 
     private fun uploadProductImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().uploadImageToCloudStorage(
+        FirestoreClassKT().uploadImageToCloudStorage(
             this@EditProductActivity,
             mSelectedImageFileUri,
             Constants.PRODUCT_IMAGE

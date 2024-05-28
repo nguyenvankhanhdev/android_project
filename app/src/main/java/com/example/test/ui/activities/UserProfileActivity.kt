@@ -23,7 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.User
 import com.example.test.utils.Constants
 import com.example.test.utils.GlideLoader
@@ -150,7 +150,7 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
                     if (validateUserProfileDetails()) {
                         showProgressDialog(resources.getString(R.string.please_wait))
                         if (mSelectedImageFileUri != null) {
-                            FirestoreClass().uploadImageToCloudStorage(
+                            FirestoreClassKT().uploadImageToCloudStorage(
                                 this,
                                 mSelectedImageFileUri,
                                 Constants.USER_PROFILE_IMAGE
@@ -195,7 +195,7 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
         if (mUserDetails.profileCompleted == 0) {
             userHashMap[Constants.COMPLETE_PROFILE] = 1
         }
-        FirestoreClass().updateUserProfileData(
+        FirestoreClassKT().updateUserProfileData(
             this@UserProfileActivity,
             userHashMap,mUserDetails.id
         )

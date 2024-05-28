@@ -1,7 +1,5 @@
 package com.example.test.ui.fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 
@@ -9,9 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -20,19 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
-import com.example.test.firestoreclass.FirestoreClass;
+import com.example.test.firestoreclass.FirestoreClassKT;
 import com.example.test.models.User;
-import com.example.test.ui.adapters.MyProductsListAdapter;
 import com.example.test.ui.adapters.UsersListAdapter;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +39,7 @@ public class UsersFragment extends Fragment {
 
     private Map<String, String> userEmailIdkeyMap = new HashMap<>();
 
-    private FirestoreClass firestoreClass;
+    private FirestoreClassKT firestoreClassKT;
     private int selectedPosition;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,7 +79,7 @@ public class UsersFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        firestoreClass = new FirestoreClass();
+        firestoreClassKT = new FirestoreClassKT();
     }
 
     @Override
@@ -174,7 +163,7 @@ public class UsersFragment extends Fragment {
 
     private void loadUserEmails() {
         // Gọi hàm getUsersInfo từ FirestoreClass để lấy danh sách người dùng
-        firestoreClass.getUsersInfo(users -> {
+        firestoreClassKT.getUsersInfo(users -> {
             // Sau khi nhận được danh sách người dùng, thêm email của từng người dùng vào danh sách userEmailList
             userEmailList.clear(); // Xóa danh sách trước khi thêm dữ liệu mới
             userEmailList.addAll(users); // Thêm người dùng vào danh sách
@@ -189,7 +178,7 @@ public class UsersFragment extends Fragment {
 
     private void loadIdKeyEmail() {
         // Gọi hàm getUsersInfo từ FirestoreClass để lấy danh sách người dùng
-        firestoreClass.getUsersInfo(users -> {
+        firestoreClassKT.getUsersInfo(users -> {
             for (User user : users) {
                 userEmailIdkeyMap.put(user.getEmail(), user.getIdkey());
             }
@@ -294,7 +283,7 @@ public class UsersFragment extends Fragment {
     private void deleteUser(String userEmailToDelete,String idKey) {
         // Gọi hàm xóa người dùng từ FirestoreClass
 
-        firestoreClass.deleteUserByEmail(userEmailToDelete,idKey, isSuccess -> {
+        firestoreClassKT.deleteUserByEmail(userEmailToDelete,idKey, isSuccess -> {
             if (isSuccess) {
                 // Xóa thành công, cập nhật giao diện
                 userEmailList.remove(selectedPosition);

@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.User
 import com.example.test.utils.Constants
 import com.example.test.utils.GlideLoader
@@ -79,7 +79,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
     }
     private fun getUserDetails() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getUserDetails(this@SettingsActivity)
+        FirestoreClassKT().getUserDetails(this@SettingsActivity)
     }
     fun userDetailsSuccess(user: User) {
         hideProgressDialog()

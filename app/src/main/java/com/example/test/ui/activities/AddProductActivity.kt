@@ -10,12 +10,11 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Product
 import com.example.test.models.SizeProduct
 import com.example.test.utils.Constants
@@ -184,7 +183,7 @@ class AddProductActivity : BaseActivity(), View.OnClickListener {
     }
     private fun uploadProductImage() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().uploadImageToCloudStorage(
+        FirestoreClassKT().uploadImageToCloudStorage(
             this@AddProductActivity,
             mSelectedImageFileUri,
             Constants.PRODUCT_IMAGE
@@ -232,6 +231,7 @@ class AddProductActivity : BaseActivity(), View.OnClickListener {
             showErrorSnackBar("Invalid product type selected.", true)
             return
         }
+
         val product = Product(
             product_id = "",
             title = et_product_title.text.toString().trim(),
@@ -277,7 +277,7 @@ class AddProductActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun setSpinnerType() {
-        FirestoreClass().getType { types ->
+        FirestoreClassKT().getType { types ->
             typeList.clear()
             typeList.addAll(types)
             setupSpinner(typeList.map { it.first })

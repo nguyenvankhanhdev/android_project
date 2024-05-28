@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Cart
 import com.example.test.models.Product
 import com.example.test.models.SizeProduct
@@ -66,14 +66,14 @@ class CartListActivity : BaseActivity() {
     }
     private fun getProductList() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getAllProductsList(this@CartListActivity)
+        FirestoreClassKT().getAllProductsList(this@CartListActivity)
     }
     fun successProductsListFromFireStore(productsList: ArrayList<Product>) {
         mProductsList = productsList
         getCartItemsList()
     }
     private fun getCartItemsList() {
-        FirestoreClass().getCartList(this@CartListActivity)
+        FirestoreClassKT().getCartList(this@CartListActivity)
     }
     fun successCartItemsList(cartList: ArrayList<Cart>, sizeProductList: ArrayList<SizeProduct>) {
         hideProgressDialog()

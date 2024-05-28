@@ -12,9 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Cart
 import com.example.test.models.Product
 import com.example.test.utils.Constants
@@ -63,7 +62,7 @@ class ProductDetailsActivity : BaseActivity(), View.OnClickListener {
 
         setupActionBar()
 
-        if (FirestoreClass().getCurrentUserID() == productOwnerId) {
+        if (FirestoreClassKT().getCurrentUserID() == productOwnerId) {
             btn_add_to_cart.visibility = View.GONE
             btn_go_to_cart.visibility = View.GONE
         } else {
@@ -95,9 +94,8 @@ class ProductDetailsActivity : BaseActivity(), View.OnClickListener {
 
     private fun addToCart() {
         val selectedSize = spinner_product_size.selectedItem.toString()
-
         val addToCart = Cart(
-            FirestoreClass().getCurrentUserID(),
+            FirestoreClassKT().getCurrentUserID(),
             mProductId,
             mProductDetails.title,
             mProductDetails.price,
@@ -107,7 +105,7 @@ class ProductDetailsActivity : BaseActivity(), View.OnClickListener {
             selectedSize
         )
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().addCartItems(this@ProductDetailsActivity, addToCart)
+        FirestoreClassKT().addCartItems(this@ProductDetailsActivity, addToCart)
     }
 
     private fun setupActionBar() {
@@ -121,7 +119,7 @@ class ProductDetailsActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun getProductDetails() {
-        FirestoreClass().getProductDetails(this@ProductDetailsActivity, mProductId)
+        FirestoreClassKT().getProductDetails(this@ProductDetailsActivity, mProductId)
     }
 
     fun productDetailsSuccess(product: Product, sizeQuantityMap: Map<String, Long>) {
@@ -136,7 +134,7 @@ class ProductDetailsActivity : BaseActivity(), View.OnClickListener {
         val sizeList = sizeQuantityMap.keys.toList()
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, sizeList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        FirestoreClass().getTypeNameById(product.shoeTypeId) { typeName ->
+        FirestoreClassKT().getTypeNameById(product.shoeTypeId) { typeName ->
             if (typeName != null) {
                 tv_type.text = typeName
             } else {

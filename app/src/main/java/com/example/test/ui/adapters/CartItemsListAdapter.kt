@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Cart
 import com.example.test.ui.activities.CartListActivity
 import com.example.test.utils.Constants
@@ -84,7 +84,7 @@ open class CartItemsListAdapter(
 
             holder.ib_remove_cart_item.setOnClickListener {
                 if (model.cart_quantity == "1") {
-                    FirestoreClass().removeItemFromCart(context, model.id)
+                    FirestoreClassKT().removeItemFromCart(context, model.id)
                 } else {
                     val cartQuantity: Int = model.cart_quantity.toInt()
                     val itemHashMap = HashMap<String, Any>()
@@ -92,7 +92,7 @@ open class CartItemsListAdapter(
                     if (context is CartListActivity) {
                         context.showProgressDialog(context.resources.getString(R.string.please_wait))
                     }
-                    FirestoreClass().updateMyCart(context, model.id, itemHashMap)
+                    FirestoreClassKT().updateMyCart(context, model.id, itemHashMap)
                 }
             }
             holder.ib_add_cart_item.setOnClickListener {
@@ -103,7 +103,7 @@ open class CartItemsListAdapter(
                     if (context is CartListActivity) {
                         context.showProgressDialog(context.resources.getString(R.string.please_wait))
                     }
-                    FirestoreClass().updateMyCart(context, model.id, itemHashMap)
+                    FirestoreClassKT().updateMyCart(context, model.id, itemHashMap)
                 } else {
                     if (context is CartListActivity) {
                         context.showErrorSnackBar(
@@ -123,7 +123,7 @@ open class CartItemsListAdapter(
                         context.showProgressDialog(context.resources.getString(R.string.please_wait))
                     }
                 }
-                FirestoreClass().removeItemFromCart(context, model.id)
+                FirestoreClassKT().removeItemFromCart(context, model.id)
             }
         }
     }

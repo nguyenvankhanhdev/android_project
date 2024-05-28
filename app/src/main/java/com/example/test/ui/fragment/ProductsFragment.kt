@@ -2,7 +2,6 @@ package com.example.test.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,12 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.databinding.FragmentProductsBinding
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Product
 import com.example.test.ui.activities.AddProductActivity
 import com.example.test.ui.adapters.MyProductsListAdapter
@@ -63,7 +61,7 @@ class ProductsFragment : BaseFragment() {
     }
     private fun getProductListFromFireStore() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getProductsList(this@ProductsFragment)
+        FirestoreClassKT().getProductsList(this@ProductsFragment)
     }
     fun successProductsListFromFireStore(productsList: ArrayList<Product>) {
         hideProgressDialog()
@@ -114,7 +112,7 @@ class ProductsFragment : BaseFragment() {
         builder.setIcon(android.R.drawable.ic_dialog_alert)
         builder.setPositiveButton(resources.getString(R.string.yes)) { dialogInterface, _ ->
             showProgressDialog(resources.getString(R.string.please_wait))
-            FirestoreClass().deleteProduct(this@ProductsFragment, productID)
+            FirestoreClassKT().deleteProduct(this@ProductsFragment, productID)
             dialogInterface.dismiss()
         }
         builder.setNegativeButton(resources.getString(R.string.no)) { dialogInterface, _ ->

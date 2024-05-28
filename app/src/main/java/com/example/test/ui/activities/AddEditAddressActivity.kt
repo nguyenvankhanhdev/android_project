@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.widget.Toolbar
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Address
 import com.example.test.utils.Constants
 import com.google.android.material.textfield.TextInputLayout
@@ -169,7 +169,7 @@ class AddEditAddressActivity : BaseActivity() {
                 }
             }
             val addressModel = Address(
-                FirestoreClass().getCurrentUserID(),
+                FirestoreClassKT().getCurrentUserID(),
                 fullName,
                 phoneNumber,
                 address,
@@ -179,13 +179,13 @@ class AddEditAddressActivity : BaseActivity() {
                 otherDetails
             )
             if (mAddressDetails != null && mAddressDetails!!.id.isNotEmpty()) {
-                FirestoreClass().updateAddress(
+                FirestoreClassKT().updateAddress(
                     this@AddEditAddressActivity,
                     addressModel,
                     mAddressDetails!!.id
                 )
             } else {
-                FirestoreClass().addAddress(this@AddEditAddressActivity, addressModel)
+                FirestoreClassKT().addAddress(this@AddEditAddressActivity, addressModel)
             }
         }
     }

@@ -11,12 +11,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.User
 import com.example.test.models.UserRole
 import com.example.test.utils.ClothesEditText
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlin.random.Random
@@ -182,7 +180,7 @@ class RegisterActivity : BaseActivity() {
                             role = UserRole.USER.name
 
                         )
-                        FirestoreClass().registerUser(this@RegisterActivity, user)
+                        FirestoreClassKT().registerUser(this@RegisterActivity, user)
                     } else {
                         hideProgressDialog()
                         showErrorSnackBar(task.exception!!.message.toString(), true)

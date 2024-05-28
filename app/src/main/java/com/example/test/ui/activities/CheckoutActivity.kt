@@ -12,7 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Address
 import com.example.test.models.Cart
 import com.example.test.models.Order
@@ -53,7 +53,7 @@ class CheckoutActivity : BaseActivity() {
     private var mSubTotal: Double = 0.0
     private var mTotalAmount: Double = 0.0
     private lateinit var mOrderDetails: Order
-
+    private val mFireStore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,14 +109,14 @@ class CheckoutActivity : BaseActivity() {
     }
     private fun getProductList() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getAllProductsList(this@CheckoutActivity)
+        FirestoreClassKT().getAllProductsList(this@CheckoutActivity)
     }
     fun successProductsListFromFireStore(productsList: ArrayList<Product>) {
         mProductsList = productsList
         getCartItemsList()
     }
     private fun getCartItemsList() {
-        FirestoreClass().getCartList(this@CheckoutActivity)
+        FirestoreClassKT().getCartList(this@CheckoutActivity)
     }
     fun successCartItemsList(cartList: ArrayList<Cart>, sizeProductList: ArrayList<SizeProduct>) {
         hideProgressDialog()
@@ -151,9 +151,11 @@ class CheckoutActivity : BaseActivity() {
         }
     }
     private fun placeAnOrder() {
+        val documentReference = mFireStore.collection(Constants.ORDERS).document()
+        val newOrderId = documentReference.id
         showProgressDialog(resources.getString(R.string.please_wait))
         mOrderDetails = Order(
-            FirestoreClass().getCurrentUserID(),
+            FirestoreClassKT().getCurrentUserID(),
             mCartItemsList,
             mAddressDetails!!,
             "My order ${System.currentTimeMillis()}",
@@ -162,12 +164,13 @@ class CheckoutActivity : BaseActivity() {
             mSubTotal.toString(),
             "10.0",
             mTotalAmount.toString(),
-            System.currentTimeMillis()
+            System.currentTimeMillis(),
+            id = newOrderId
         )
-        FirestoreClass().placeOrder(this@CheckoutActivity, mOrderDetails)
+        FirestoreClassKT().placeOrder(this@CheckoutActivity, mOrderDetails)
     }
     fun orderPlacedSuccess() {
-        FirestoreClass().updateAllDetails(this@CheckoutActivity, mCartItemsList, mOrderDetails)
+        FirestoreClassKT().updateAllDetails(this@CheckoutActivity, mCartItemsList, mOrderDetails)
         for (cartItem in mCartItemsList) {
             updateSizeProductQuantity(cartItem.product_id, cartItem.size, cartItem.cart_quantity.toInt())
         }

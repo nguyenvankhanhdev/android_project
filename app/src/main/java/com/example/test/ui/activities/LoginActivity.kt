@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.User
 import com.example.test.utils.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -108,7 +108,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        FirestoreClass().getUserDetails(this@LoginActivity)
+                        FirestoreClassKT().getUserDetails(this@LoginActivity)
                     } else {
                         Log.e("Login Error", "Failed to sign in: ${task.exception?.message}")
                         hideProgressDialog()

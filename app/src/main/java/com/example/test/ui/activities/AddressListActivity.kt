@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Address
 import com.example.test.ui.adapters.AddressListAdapter
 import com.example.test.utils.Constants
@@ -97,7 +97,7 @@ class AddressListActivity :BaseActivity() {
 
         showProgressDialog(resources.getString(R.string.please_wait))
 
-        FirestoreClass().getAddressesList(this@AddressListActivity)
+        FirestoreClassKT().getAddressesList(this@AddressListActivity)
     }
     fun successAddressListFromFirestore(addressList: ArrayList<Address>) {
 
@@ -132,7 +132,7 @@ class AddressListActivity :BaseActivity() {
                         // Show the progress dialog.
                         showProgressDialog(resources.getString(R.string.please_wait))
 
-                        FirestoreClass().deleteAddress(
+                        FirestoreClassKT().deleteAddress(
                             this@AddressListActivity,
                             addressList[viewHolder.adapterPosition].id
                         )

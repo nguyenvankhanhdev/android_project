@@ -36,7 +36,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-class FirestoreClass {
+class FirestoreClassKT {
     private val mFireStore = FirebaseFirestore.getInstance()
     fun registerUser(activity: RegisterActivity, userInfo: User) {
         mFireStore.collection(Constants.USERS)
@@ -553,7 +553,7 @@ class FirestoreClass {
         val writeBatch = mFireStore.batch()
         for (cart in cartList) {
             val soldProduct = SoldProduct(
-                FirestoreClass().getCurrentUserID(),
+                FirestoreClassKT().getCurrentUserID(),
                 cart.title,
                 cart.price,
                 cart.cart_quantity,
@@ -719,11 +719,8 @@ class FirestoreClass {
                 for (document in documents) {
                     document.reference.delete()
                 }
-
-                // Đăng nhập vào tài khoản cần xóa
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmailToDelete, userPassword)
                     .addOnSuccessListener { authResult ->
-                        // Xóa tài khoản từ Firebase Authentication
                         val currentUser = authResult.user
                         currentUser?.delete()
                             ?.addOnCompleteListener { deleteTask ->

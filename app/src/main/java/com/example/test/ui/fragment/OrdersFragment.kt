@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.databinding.FragmentOrdersBinding
-import com.example.test.firestoreclass.FirestoreClass
+import com.example.test.firestoreclass.FirestoreClassKT
 import com.example.test.models.Order
 import com.myshoppal.ui.adapters.MyOrdersListAdapter
 
@@ -42,7 +42,7 @@ class OrdersFragment : BaseFragment() {
     }
     private fun getMyOrdersList() {
         showProgressDialog(resources.getString(R.string.please_wait))
-        FirestoreClass().getMyOrdersList(this@OrdersFragment)
+        FirestoreClassKT().getMyOrdersList(this@OrdersFragment)
     }
     fun populateOrdersListInUI(ordersList: ArrayList<Order>) {
         hideProgressDialog()
