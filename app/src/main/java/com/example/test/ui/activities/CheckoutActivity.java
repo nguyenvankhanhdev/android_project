@@ -24,6 +24,8 @@ import com.example.test.utils.ClothesTextView;
 import com.example.test.utils.ClothesTextViewBold;
 import com.example.test.utils.Constants;
 import com.example.test.utils.JavaMailAPI;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -171,8 +173,30 @@ public class CheckoutActivity extends BaseActivity {
         message = buildHtmlContent(cartList, sizeProductList);
     }
 
+//    private void placeAnOrder() {
+//        showProgressDialog(getResources().getString(R.string.please_wait));
+//        mOrderDetails = new Order(
+//                FirestoreClass.getCurrentUserID(),
+//                mCartItemsList,
+//                mAddressDetails,
+//                "My order " + System.currentTimeMillis(),
+//                mCartItemsList.get(0).getImage(),
+//                mCartItemsList.get(0).getSize(),
+//                Double.toString(mSubTotal),
+//                "10.0",
+//                Double.toString(mTotalAmount),
+//                System.currentTimeMillis()
+//        );
+//        new FirestoreClass().placeOrder(CheckoutActivity.this, mOrderDetails);
+//    }
+
     private void placeAnOrder() {
+        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = mFireStore.collection(Constants.ORDERS).document();
+        String newOrderId = documentReference.getId();
+
         showProgressDialog(getResources().getString(R.string.please_wait));
+
         mOrderDetails = new Order(
                 FirestoreClass.getCurrentUserID(),
                 mCartItemsList,
@@ -180,13 +204,18 @@ public class CheckoutActivity extends BaseActivity {
                 "My order " + System.currentTimeMillis(),
                 mCartItemsList.get(0).getImage(),
                 mCartItemsList.get(0).getSize(),
-                Double.toString(mSubTotal),
+                String.valueOf(mSubTotal),
                 "10.0",
-                Double.toString(mTotalAmount),
-                System.currentTimeMillis()
+                String.valueOf(mTotalAmount),
+                System.currentTimeMillis(),
+                newOrderId
         );
-        new FirestoreClass().placeOrder(CheckoutActivity.this, mOrderDetails);
+
+        FirestoreClass.placeOrder(this, mOrderDetails);
     }
+
+
+
 
     public void orderPlacedSuccess() {
         new FirestoreClass().updateAllDetails(this, mCartItemsList, mOrderDetails);

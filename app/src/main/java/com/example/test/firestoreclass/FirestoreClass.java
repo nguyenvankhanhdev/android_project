@@ -570,7 +570,7 @@ public class FirestoreClass {
             Log.e(activity.getClass().getSimpleName(), "Error while deleting the address.", e);
         });
     }
-    public void placeOrder(final CheckoutActivity activity, Order order) {
+    public static void placeOrder(final CheckoutActivity activity, Order order) {
         mFireStore.collection(Constants.ORDERS)
                 .document()
                 .set(order, SetOptions.merge())
@@ -594,7 +594,11 @@ public class FirestoreClass {
         FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
         WriteBatch writeBatch = mFireStore.batch();
 
+
         for (Cart cart : cartList) {
+            DocumentReference documentReference = mFireStore.collection(Constants.SOLD_PRODUCTS)
+                    .document();
+            String newSoldProductId = documentReference.getId();
             SoldProduct soldProduct = new SoldProduct(
                     FirestoreClass.getCurrentUserID(),
                     cart.getTitle(),
@@ -607,11 +611,11 @@ public class FirestoreClass {
                     order.getSub_total_amount(),
                     order.getShipping_charge(),
                     order.getTotal_amount(),
-                    order.getAddress()
+                    order.getAddress(),
+                    newSoldProductId
             );
 
-            DocumentReference documentReference = mFireStore.collection(Constants.SOLD_PRODUCTS)
-                    .document();
+
             writeBatch.set(documentReference, soldProduct);
         }
 

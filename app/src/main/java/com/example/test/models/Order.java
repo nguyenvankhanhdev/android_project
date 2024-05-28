@@ -61,7 +61,7 @@ public class Order implements Parcelable {
         this.id = "";
     }
 
-    public Order(String currentUserID, ArrayList<Cart> mCartItemsList, Address mAddressDetails, String title, String image, String size, String sub_total_amount, String shipping_charge, String total_amount, long order_datetime) {
+    public Order(String currentUserID, ArrayList<Cart> mCartItemsList, Address mAddressDetails, String title, String image, String size, String sub_total_amount, String shipping_charge, String total_amount, long order_datetime, String id) {
         this.user_id = currentUserID;
         this.items = mCartItemsList;
         this.address = mAddressDetails;
@@ -72,7 +72,10 @@ public class Order implements Parcelable {
         this.shipping_charge = shipping_charge;
         this.total_amount = total_amount;
         this.order_datetime = order_datetime;
+        this.id = id;
     }
+
+
 
     public String getUser_id() {
         return user_id;
