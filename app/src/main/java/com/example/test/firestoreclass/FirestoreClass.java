@@ -462,7 +462,49 @@ public class FirestoreClass {
                     Log.e(TAG, "Error getting documents: ", e);
                 });
     }
-
+    public void addCartItems(ProductDetailsActivity activity, Cart addToCart) {
+        mFireStore.collection(Constants.CART_ITEMS)
+                .whereEqualTo("user_id", addToCart.getUser_id())
+                .whereEqualTo("product_id", addToCart.getProduct_id())
+                .whereEqualTo("size", addToCart.getSize())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            Cart existingCartItem = document.toObject(Cart.class);
+                            if (existingCartItem != null) {
+                                int newQuantity = Integer.parseInt(existingCartItem.getCart_quantity()) + 1;
+                                existingCartItem.setCart_quantity(String.valueOf(newQuantity));
+                                mFireStore.collection(Constants.CART_ITEMS)
+                                        .document(document.getId())
+                                        .set(existingCartItem, SetOptions.merge())
+                                        .addOnSuccessListener(aVoid -> {
+                                            activity.addToCartSuccess();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            activity.hideProgressDialog();
+                                            Log.e(activity.getClass().getSimpleName(), "Error while updating the document for cart item.", e);
+                                        });
+                            }
+                        }
+                    } else {
+                        mFireStore.collection(Constants.CART_ITEMS)
+                                .document()
+                                .set(addToCart, SetOptions.merge())
+                                .addOnSuccessListener(documentReference -> {
+                                    activity.addToCartSuccess();
+                                })
+                                .addOnFailureListener(e -> {
+                                    activity.hideProgressDialog();
+                                    Log.e(activity.getClass().getSimpleName(), "Error while creating the document for cart item.", e);
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    activity.hideProgressDialog();
+                    Log.e(activity.getClass().getSimpleName(), "Error while checking the document for cart item.", e);
+                });
+    }
     public static void getType(Callback<List<Pair<String, String>>> callback) {
         mFireStore.collection("shoe_type")
                 .get()

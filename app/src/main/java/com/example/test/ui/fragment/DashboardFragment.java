@@ -467,7 +467,7 @@ public class DashboardFragment extends BaseFragment {
             tv_no_dashboard_items_found.setVisibility(View.GONE);
             rv_dashboard_items.setLayoutManager(new GridLayoutManager(getActivity(), 2));
             rv_dashboard_items.setHasFixedSize(true);
-             adapter = new DashboardItemsListAdapter(requireActivity(), dashboardItemsList);
+            adapter = new DashboardItemsListAdapter(requireActivity(), dashboardItemsList);
             rv_dashboard_items.setAdapter(adapter);
             adapter.setOnClickListener((position, product) -> {
                 Intent intent = new Intent(getContext(), ProductDetailsActivity.class);

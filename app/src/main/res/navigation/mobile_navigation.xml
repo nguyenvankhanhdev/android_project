@@ -14,13 +14,8 @@
     <fragment
         android:id="@+id/navigation_orders"
         android:name="com.example.test.ui.fragment.OrdersFragment"
-        android:label="@string/title_orders"
+        android:label="@string/title_products"
         tools:layout="@layout/fragment_orders" />
-    <fragment
-        android:id="@+id/navigation_statistical"
-        android:name="com.example.test.ui.fragment.StatisticalFragment"
-        android:label="@string/title_statistical"
-        tools:layout="@layout/fragment_statistical" />
 
     <fragment
         android:id="@+id/navigation_sold_products"

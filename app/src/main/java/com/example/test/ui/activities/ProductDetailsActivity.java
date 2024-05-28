@@ -106,7 +106,7 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
                 selectedSize
         );
         showProgressDialog(getResources().getString(R.string.please_wait));
-        new FirestoreClassKT().addCartItems(this, addToCart);
+        new FirestoreClass().addCartItems(this, addToCart);
     }
 
     private void setupActionBar() {
@@ -181,4 +181,5 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
         btn_add_to_cart.setVisibility(View.GONE);
         btn_go_to_cart.setVisibility(View.VISIBLE);
     }
+
 }
