@@ -276,8 +276,6 @@ class AddProductActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-
-
     private fun setSpinnerType() {
         FirestoreClass().getType { types ->
             typeList.clear()

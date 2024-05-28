@@ -13,13 +13,10 @@ class ForgotPasswordActivity : BaseActivity() {
     private lateinit var btn_submit: Button
     private lateinit var et_email: EditText
     private lateinit var toolbar_forgot_password_activity: androidx.appcompat.widget.Toolbar
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_forgot_password)
-
-
         btn_submit = findViewById(R.id.btn_submit)
         et_email = findViewById(R.id.et_email)
         toolbar_forgot_password_activity = findViewById(R.id.toolbar_forgot_password_activity)
@@ -42,20 +39,16 @@ class ForgotPasswordActivity : BaseActivity() {
                                     resources.getString(R.string.email_sent_success),
                                     Toast.LENGTH_LONG
                                 ).show()
-
                                 finish()
 
                             } else {
                                 showErrorSnackBar(task.exception!!.message.toString(), true)
-
                             }
                         }
                     }
             }
         }
         setupActionBar()
-
-
     }
 
     private fun setupActionBar() {

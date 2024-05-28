@@ -4,11 +4,14 @@
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_vector_dashboard"
         android:title="@string/title_dashboard" />
-
     <item
         android:id="@+id/navigation_products"
         android:icon="@drawable/ic_vector_products"
         android:title="@string/title_products" />
+    <item
+        android:id="@+id/navigation_users"
+        android:icon="@drawable/ic_vector_manage_accounts"
+        android:title="Tài Khoản" />
     <item
         android:id="@+id/navigation_orders"
         android:icon="@drawable/ic_vector_orders"
@@ -17,4 +20,5 @@
         android:id="@+id/navigation_sold_products"
         android:icon="@drawable/ic_vector_sold_products"
         android:title="@string/title_sold_products" />
+
 </menu>

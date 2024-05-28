@@ -33,13 +33,14 @@ open class MyProductsListAdapter(
             )
         )
     }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
         if (holder is MyViewHolder) {
             GlideLoader(context).loadProductPicture(model.image, holder.itemImage)
             holder.itemName.text = model.title
             holder.itemPrice.text = "$${model.price}"
+            holder.editButton.visibility = View.GONE
+
             holder.deleteButton.setOnClickListener{
                 fragment.deleteProduct(model.product_id)
             }

@@ -27,6 +27,7 @@ class DashboardActivity : BaseActivity() {
         val navController = navHostFragment.navController
         val appBarConfiguration = AppBarConfiguration(
             setOf(
+                R.id.navigation_users,
                 R.id.navigation_products,
                 R.id.navigation_dashboard,
                 R.id.navigation_orders,
@@ -39,8 +40,10 @@ class DashboardActivity : BaseActivity() {
 
         if (userRole == UserRole.ADMIN.name) {
             navView.menu.findItem(R.id.navigation_products).isVisible = true
+            navView.menu.findItem(R.id.navigation_users).isVisible=true
         } else {
             navView.menu.findItem(R.id.navigation_products).isVisible = false
+            navView.menu.findItem(R.id.navigation_users).isVisible=false
         }
     }
     private fun getUserRoleFromSharedPreferences(): String? {

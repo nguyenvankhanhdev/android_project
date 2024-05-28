@@ -107,9 +107,9 @@ class FirestoreClass {
             }
     }
 
-    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>) {
+    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>,id:String) {
         mFireStore.collection(Constants.USERS)
-            .document(getCurrentUserID())
+            .document(id)
             .update(userHashMap)
             .addOnSuccessListener {
                 when (activity) {
@@ -223,7 +223,6 @@ class FirestoreClass {
                     product!!.product_id = i.id
                     productsList.add(product)
                 }
-
                 when (activity) {
                     is CartListActivity -> {
                         activity.successProductsListFromFireStore(productsList)
@@ -335,29 +334,29 @@ class FirestoreClass {
                 )
             }
     }
-    fun checkIfItemExistInCart(activity: ProductDetailsActivity, productId: String) {
-        mFireStore.collection(Constants.CART_ITEMS)
-            .whereEqualTo(Constants.USER_ID, getCurrentUserID())
-            .whereEqualTo(Constants.PRODUCT_ID, productId)
-            .get()
-            .addOnSuccessListener { document ->
-                Log.e(activity.javaClass.simpleName, document.documents.toString())
-                if (document.documents.size > 0) {
-                    activity.productExistsInCart()
-                } else {
-                    activity.hideProgressDialog()
-                }
-            }
-            .addOnFailureListener { e ->
-                activity.hideProgressDialog()
-
-                Log.e(
-                    activity.javaClass.simpleName,
-                    "Error while checking the existing cart list.",
-                    e
-                )
-            }
-    }
+//    fun checkIfItemExistInCart(activity: ProductDetailsActivity, productId: String) {
+//        mFireStore.collection(Constants.CART_ITEMS)
+//            .whereEqualTo(Constants.USER_ID, getCurrentUserID())
+//            .whereEqualTo(Constants.PRODUCT_ID, productId)
+//            .get()
+//            .addOnSuccessListener { document ->
+//                Log.e(activity.javaClass.simpleName, document.documents.toString())
+//                if (document.documents.size > 0) {
+//                    activity.productExistsInCart()
+//                } else {
+//                    activity.hideProgressDialog()
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                activity.hideProgressDialog()
+//
+//                Log.e(
+//                    activity.javaClass.simpleName,
+//                    "Error while checking the existing cart list.",
+//                    e
+//                )
+//            }
+//    }
     fun getCartList(activity: Activity) {
         mFireStore.collection(Constants.CART_ITEMS)
             .whereEqualTo(Constants.USER_ID, getCurrentUserID())
@@ -675,6 +674,7 @@ class FirestoreClass {
             }
     }
 
+
     fun getTypeNameById(typeId: String, callback: (String?) -> Unit) {
         mFireStore.collection("shoe_type")
             .document(typeId)
@@ -692,4 +692,62 @@ class FirestoreClass {
                 callback(null)
             }
     }
+
+    fun getUsersInfo(callback: (List<User>) -> Unit) {
+        mFireStore.collection(Constants.USERS)
+            .get()
+            .addOnSuccessListener { documents ->
+                val userList: ArrayList<User> = ArrayList()
+                for (document in documents) {
+                    val user = document.toObject(User::class.java)
+                    userList.add(user)
+                }
+                Log.d("FirestoreClass", "Users loaded successfully: ${userList.size} users")
+                callback(userList)
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreClass", "Error loading users", e)
+            }
+    }
+
+    fun deleteUserByEmail(userEmailToDelete: String, userPassword: String, callback: (Boolean) -> Unit) {
+        // Xóa người dùng từ Firestore
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo("email", userEmailToDelete)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    document.reference.delete()
+                }
+
+                // Đăng nhập vào tài khoản cần xóa
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmailToDelete, userPassword)
+                    .addOnSuccessListener { authResult ->
+                        // Xóa tài khoản từ Firebase Authentication
+                        val currentUser = authResult.user
+                        currentUser?.delete()
+                            ?.addOnCompleteListener { deleteTask ->
+                                if (deleteTask.isSuccessful) {
+                                    callback(true)
+                                } else {
+                                    Log.e("Delete User", "Error deleting user from auth.", deleteTask.exception)
+                                    callback(false)
+                                }
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Delete User", "Error signing in to delete user from auth.", e)
+                        callback(false)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Delete User", "Error deleting user from Firestore.", e)
+                callback(false)
+            }
+    }
+
+
+
+
+
 }

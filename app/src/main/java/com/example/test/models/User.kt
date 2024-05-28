@@ -12,5 +12,8 @@ data class User(
     val mobile: Long = 0,
     val gender: String = "",
     val role: String = UserRole.USER.name,
-    val profileCompleted: Int = 0)
+    val profileCompleted: Int = 0,
+    val idkey:String = ""
+
+)
     :Parcelable
