@@ -11,6 +11,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.models.User
+import com.example.test.ui.activities.AccountProfileActivity
 import com.example.test.ui.activities.UserProfileActivity
 import com.example.test.ui.fragment.UsersFragment
 import com.example.test.utils.ClothesTextView
@@ -39,8 +40,7 @@ open class UsersListAdapter (
                         if (model.image != null) {
                                 GlideLoader(context).loadUserPicture(model.image, holder.itemImage)
                         } else {
-                                // Xử lý khi image là null, ví dụ hiển thị ảnh mặc định
-                                // holder.itemImage.setImageResource(R.drawable.default_image)
+
                         }
                         holder.itemName.text = model.email
                         holder.itemPrice.text = model.firstName + model.lastName
@@ -51,17 +51,15 @@ open class UsersListAdapter (
                                         setTitle("Xác nhận xóa")
                                         setMessage("Bạn có chắc chắn muốn xóa sản phẩm này không?")
                                         setPositiveButton("Có") { dialog, which ->
-                                                // Gọi hàm xóa sản phẩm từ fragment ở đây
                                                 fragment.activeDeleteUser(model.email)
                                         }
                                         setNegativeButton("Không") { dialog, which ->
-                                                // Không làm gì cả
                                         }
                                         show()
                                 }
                         }
                         holder.itemView.setOnClickListener {
-                                val intent = Intent(context, UserProfileActivity::class.java)
+                                val intent = Intent(context, AccountProfileActivity::class.java)
                                 intent.putExtra(Constants.EXTRA_USER_DETAILS, model)
                                 context.startActivity(intent)
                         }

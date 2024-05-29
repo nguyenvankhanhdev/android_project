@@ -46,7 +46,7 @@ public class Constants {
     public static final String ORDERS = "orders";
     public static final String STOCK_QUANTITY = "stock_quantity";
     public static final String EXTRA_MY_ORDER_DETAILS = "extra_MY_ORDER_DETAILS";
-    public static final String USER_ROLE = "user_role";
+    public static final String USER_ROLE = "role";
     public static final String ADMIN_ROLE = "Admin";
     public static final String USER_ROLE_DEFAULT = "User";
     public static final String TYPE = "shoe_type";

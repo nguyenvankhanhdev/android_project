@@ -17,6 +17,7 @@ import com.example.test.ui.activities.LoginActivity
 import com.example.test.ui.activities.RegisterActivity
 import com.example.test.ui.activities.UserProfileActivity
 import com.example.test.models.User
+import com.example.test.ui.activities.AccountProfileActivity
 import com.example.test.ui.activities.AddEditAddressActivity
 import com.example.test.ui.activities.AddProductActivity
 import com.example.test.ui.activities.AddressListActivity
@@ -118,12 +119,18 @@ class FirestoreClassKT {
                     is UserProfileActivity -> {
                         activity.userProfileUpdateSuccess()
                     }
+                    is AccountProfileActivity ->{
+                        activity.userProfileUpdateSuccess()
+                    }
                 }
             }
             .addOnFailureListener { e ->
                 when (activity) {
                     is UserProfileActivity -> {
                         activity.hideProgressDialog()
+                    }
+                    is AccountProfileActivity ->{
+                        activity.userProfileUpdateSuccess()
                     }
                 }
 
@@ -155,13 +162,16 @@ class FirestoreClassKT {
                             is UserProfileActivity -> {
                                 activity.imageUploadSuccess(uri.toString())
                             }
-
+                            is AccountProfileActivity ->{
+                                activity.imageUploadSuccess(uri.toString())
+                            }
                             is AddProductActivity -> {
                                 activity.imageUploadSuccess(uri.toString())
                             }
                             is EditProductActivity->{
                                 activity.imageUploadSuccess(uri.toString())
                             }
+
                         }
                     }
             }
@@ -170,7 +180,9 @@ class FirestoreClassKT {
                     is UserProfileActivity -> {
                         activity.hideProgressDialog()
                     }
-
+                    is AccountProfileActivity ->{
+                        activity.hideProgressDialog()
+                    }
                     is AddProductActivity -> {
                         activity.hideProgressDialog()
                     }
@@ -804,6 +816,7 @@ class FirestoreClassKT {
                 callback(false)
             }
     }
+
 
 
 }
