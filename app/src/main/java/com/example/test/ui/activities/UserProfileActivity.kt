@@ -68,6 +68,7 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
         et_email = findViewById(R.id.et_email)
         iv_user_photo = findViewById(R.id.iv_user_photo)
         btn_save = findViewById(R.id.btn_save)
+
         if (intent.hasExtra(Constants.EXTRA_USER_DETAILS)) {
             mUserDetails = intent.getParcelableExtra(Constants.EXTRA_USER_DETAILS)!!
         } else {
@@ -75,9 +76,11 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
                 .show()
             finish()
         }
+
         if (intent.hasExtra(Constants.EXTRA_USER_DETAILS)) {
             mUserDetails = intent.getParcelableExtra(Constants.EXTRA_USER_DETAILS)!!
         }
+
         tv_title = findViewById(R.id.tv_title)
         if (mUserDetails.profileCompleted == 0) {
             tv_title.text = resources.getString(R.string.title_complete_profile)
@@ -194,7 +197,7 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
         }
         FirestoreClassKT().updateUserProfileData(
             this@UserProfileActivity,
-            userHashMap
+            userHashMap,mUserDetails.id
         )
     }
 
@@ -272,7 +275,5 @@ class UserProfileActivity : BaseActivity(), View.OnClickListener {
         mUserProfileImageURl = imageURL
         updateUserProfileDetails()
     }
-
-
 
 }

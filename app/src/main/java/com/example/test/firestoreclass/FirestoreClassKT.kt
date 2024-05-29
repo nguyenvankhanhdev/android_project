@@ -109,9 +109,9 @@ class FirestoreClassKT {
             }
     }
 
-    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>) {
+    fun updateUserProfileData(activity: Activity, userHashMap: HashMap<String, Any>,id:String) {
         mFireStore.collection(Constants.USERS)
-            .document(getCurrentUserID())
+            .document(id)
             .update(userHashMap)
             .addOnSuccessListener {
                 when (activity) {
@@ -750,7 +750,60 @@ class FirestoreClassKT {
                 callback.onCallback(0) // Trả về 0 khi thất bại
             }
     }
+    fun getUsersInfo(callback: (List<User>) -> Unit) {
+        mFireStore.collection(Constants.USERS)
+            .get()
+            .addOnSuccessListener { documents ->
+                val userList: ArrayList<User> = ArrayList()
+                for (document in documents) {
+                    val user = document.toObject(User::class.java)
+                    userList.add(user)
+                }
+                Log.d("FirestoreClass", "Users loaded successfully: ${userList.size} users")
+                callback(userList)
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirestoreClass", "Error loading users", e)
+            }
+    }
 
+    fun deleteUserByEmail(userEmailToDelete: String, userPassword: String, callback: (Boolean) -> Unit) {
+        // Xóa người dùng từ Firestore
+        mFireStore.collection(Constants.USERS)
+            .whereEqualTo("email", userEmailToDelete)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    document.reference.delete()
+                }
+                FirebaseAuth.getInstance()
+                    .signInWithEmailAndPassword(userEmailToDelete, userPassword)
+                    .addOnSuccessListener { authResult ->
+                        val currentUser = authResult.user
+                        currentUser?.delete()
+                            ?.addOnCompleteListener { deleteTask ->
+                                if (deleteTask.isSuccessful) {
+                                    callback(true)
+                                } else {
+                                    Log.e(
+                                        "Delete User",
+                                        "Error deleting user from auth.",
+                                        deleteTask.exception
+                                    )
+                                    callback(false)
+                                }
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Delete User", "Error signing in to delete user from auth.", e)
+                        callback(false)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Delete User", "Error deleting user from Firestore.", e)
+                callback(false)
+            }
+    }
 
 
 }

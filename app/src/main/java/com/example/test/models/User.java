@@ -14,6 +14,16 @@ public class User implements Parcelable {
     private String role;
     private int profileCompleted;
 
+    public String getIdkey() {
+        return idkey;
+    }
+
+    public void setIdkey(String idkey) {
+        this.idkey = idkey;
+    }
+
+    private String idkey;
+
     public User() {
     }
 

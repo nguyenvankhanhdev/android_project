@@ -76,8 +76,7 @@ public class DashboardFragment extends BaseFragment {
     private ArrayList<Type> typeList = new ArrayList<>();
     private FirebaseFirestore db;
     private ArrayList<String> listNameType = new ArrayList<>();
-    int selectedPricePosition = 0;
-    int selectedTypePosition = 0;
+
 
 
     private void fetchTypeNamesFromFirestore() {
@@ -128,10 +127,6 @@ public class DashboardFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        db = FirebaseFirestore.getInstance();
-
-        fetchTypeNamesFromFirestore();
 
     }
 
@@ -241,17 +236,27 @@ public class DashboardFragment extends BaseFragment {
         spinner_price = root.findViewById(R.id.spinner_price);
         spinner_type = root.findViewById(R.id.spinner_type);
 
+        typeList.clear();
+        db = FirebaseFirestore.getInstance();
+
+        fetchTypeNamesFromFirestore();
+
+
+        final int[] selectedPricePosition = {0};
+        final int[] selectedTypePosition = {0};
+
         prices = Price.initPrice();
         adapterPrice=new
                 AdapterPrice(this,R.layout.layout_custom_spinner_price,
                 prices);
         spinner_price.setAdapter(adapterPrice);
+
         spinner_price.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedPricePosition = position;
-                String selectedTypeID = typeList.get(selectedTypePosition).getTypeID();
-                sortTheoDieuKien(selectedPricePosition, selectedTypeID);
+                selectedPricePosition[0] = position;
+                String selectedTypeID = typeList.get(selectedTypePosition[0]).getTypeID();
+                sortTheoDieuKien(selectedPricePosition[0], selectedTypeID);
             }
 
             @Override
@@ -262,9 +267,9 @@ public class DashboardFragment extends BaseFragment {
         spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedTypePosition = position;
-                String selectedTypeID = typeList.get(selectedTypePosition).getTypeID();
-                sortTheoDieuKien(selectedPricePosition, selectedTypeID);
+                selectedTypePosition[0] = position;
+                String selectedTypeID = typeList.get(selectedTypePosition[0]).getTypeID();
+                sortTheoDieuKien(selectedPricePosition[0], selectedTypeID);
             }
 
             @Override

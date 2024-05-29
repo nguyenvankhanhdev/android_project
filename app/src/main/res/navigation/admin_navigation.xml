@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_products" />
 
     <fragment
+        android:id="@+id/navigation_user"
+        android:name="com.example.test.ui.fragment.UsersFragment"
+        android:label="@string/title_user"
+        tools:layout="@layout/fragment_users" />
+
+    <fragment
         android:id="@+id/navigation_statistical"
         android:name="com.example.test.ui.fragment.StatisticalFragment"
         android:label="@string/title_statistical"
