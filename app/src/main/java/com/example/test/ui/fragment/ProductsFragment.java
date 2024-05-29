@@ -20,6 +20,7 @@ import com.example.test.databinding.FragmentProductsBinding;
 import com.example.test.firestoreclass.FirestoreClassKT;
 import com.example.test.models.Product;
 import com.example.test.ui.activities.AddProductActivity;
+import com.example.test.ui.activities.AddProduct_KT;
 import com.example.test.ui.adapters.MyProductsListAdapter;
 
 import java.util.ArrayList;

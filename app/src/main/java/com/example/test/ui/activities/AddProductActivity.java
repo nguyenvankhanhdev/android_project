@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -35,6 +34,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AddProductActivity extends BaseActivity implements View.OnClickListener {
 
@@ -44,10 +44,17 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
     private ImageView iv_add_update_product, iv_product_image;
     private EditText et_product_title, et_product_price, et_product_description, et_quantity;
     private Spinner spinnerSize;
+    private Spinner  spinner_type;
     private Button btn_add_size, btn_submit_add_product;
     private LinearLayout sizes_container;
     private String selectedSize;
+    private String selectedType;
     private List<Pair<String, Integer>> sizeQuantityList = new ArrayList<>();
+    private List<kotlin.Pair<String, String>> typeList = new ArrayList<kotlin.Pair<String, String>>();
+
+
+
+
     private FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
 
     @Override
@@ -67,12 +74,16 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
         sizes_container = findViewById(R.id.sizes_container);
         btn_submit_add_product = findViewById(R.id.btn_submit_add_product);
 
+        spinner_type= findViewById(R.id.spinner_type);
+
         setupActionBar();
         iv_add_update_product.setOnClickListener(this);
         btn_add_size.setOnClickListener(this);
         btn_submit_add_product.setOnClickListener(this);
 
+
         setupSpinner();
+        setSpinnerType();
         spinnerSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -83,6 +94,20 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        spinner_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedType=parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
     }
 
     private void setupActionBar() {
@@ -139,13 +164,14 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Constants.showImageChooser(AddProductActivity.this);
-            } else {
-                Toast.makeText(this, getResources().getString(R.string.read_storage_permission_denied), Toast.LENGTH_LONG).show();
-            }
-        }
+//        if (requestCode == Constants.READ_STORAGE_PERMISSION_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Constants.showImageChooser(AddProductActivity.this);
+//            } else {
+//                Toast.makeText(this, getResources().getString(R.string.read_storage_permission_denied), Toast.LENGTH_LONG).show();
+//            }
+//        }
+        Constants.showImageChooser(AddProductActivity.this);
     }
 
     @Override
@@ -195,52 +221,88 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
     }
 
     private void uploadProductDetails() {
+        String selectedTypeName = selectedType;
+        String selectedTypeId = null;
+
+        for (kotlin.Pair<String, String> type : typeList) {
+            if (type.getFirst().equals(selectedTypeName)) {
+                selectedTypeId = type.getSecond();
+                break;
+            }
+        }
+
+        if (selectedTypeId == null) {
+            showErrorSnackBar("Invalid product type selected.", true);
+            return;
+        }
         Product product = new Product(
-            "",
-            et_product_title.getText().toString().trim(),
-            et_product_price.getText().toString().trim(),
-            et_product_description.getText().toString().trim(),
-            mProductImageURL
+                "",
+                et_product_title.getText().toString().trim(),
+                et_product_price.getText().toString().trim(),
+                et_product_description.getText().toString().trim(),
+                mProductImageURL,
+                selectedTypeId
         );
 
         final String productId = mFireStore.collection(Constants.PRODUCTS).document().getId();
         product.setProduct_id(productId);
 
         mFireStore.collection(Constants.PRODUCTS).document(productId).set(product, SetOptions.merge())
-            .addOnSuccessListener(aVoid -> {
-        uploadSizeProductDetails(productId);
-        productUploadSuccess();
-    })
-        .addOnFailureListener(e -> {
-        hideProgressDialog();
-        Log.e(getClass().getSimpleName(), "Error while uploading the product details.", e);
-    });
+                .addOnSuccessListener(aVoid -> {
+                    uploadSizeProductDetails(productId);
+                    productUploadSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    hideProgressDialog();
+                    Log.e(getClass().getSimpleName(), "Error while uploading the product details.", e);
+                });
     }
 
     private void uploadSizeProductDetails(String productId) {
         for (Pair<String, Integer> pair : sizeQuantityList) {
-        String size = pair.first;
-        Integer quantity = pair.second;
+            String size = pair.first;
+            Integer quantity = pair.second;
 
-        Integer sizeInt = Integer.valueOf(size);
-        if (sizeInt != null) {
-            SizeProduct sizeProduct = new SizeProduct("", sizeInt, quantity, productId);
-            mFireStore.collection(Constants.SIZE_PRODUCTS).document().set(sizeProduct)
-                .addOnFailureListener(e -> {
-                hideProgressDialog();
-                Log.e(getClass().getSimpleName(), "Error while uploading size product details.", e);
-            });
-        } else {
-            Log.e(getClass().getSimpleName(), "Invalid size: " + size);
+            Integer sizeInt = Integer.valueOf(size);
+            if (sizeInt != null) {
+                SizeProduct sizeProduct = new SizeProduct("", sizeInt, quantity, productId);
+                mFireStore.collection(Constants.SIZE_PRODUCTS).document().set(sizeProduct)
+                        .addOnFailureListener(e -> {
+                            hideProgressDialog();
+                            Log.e(getClass().getSimpleName(), "Error while uploading size product details.", e);
+                        });
+            } else {
+                Log.e(getClass().getSimpleName(), "Invalid size: " + size);
+            }
         }
     }
+
+
+    private void setSpinnerType() {
+        new FirestoreClassKT().getType(types -> {
+            typeList.clear();
+            typeList.addAll(types);
+            setupSpinner(typeList.stream().map(pair -> pair.getFirst()).collect(Collectors.toList()));
+            return null;
+        });
     }
+
+    private void setupSpinner(List<String> typeNames) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_type.setAdapter(adapter);
+    }
+
+
+
+
+
 
     private void setupSpinner() {
         List<String> sizes = new ArrayList<>();
         for (int i = 36; i <= 43; i++) {
-        sizes.add(String.valueOf(i));
-    }
+            sizes.add(String.valueOf(i));
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, sizes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSize.setAdapter(adapter);
@@ -249,7 +311,7 @@ public class AddProductActivity extends BaseActivity implements View.OnClickList
     public void productUploadSuccess() {
         hideProgressDialog();
         Toast.makeText(AddProductActivity.this, getResources().getString(R.string.product_uploaded_success_message), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(AddProductActivity.this, DashboardActivity.class);
+        Intent intent = new Intent(AddProductActivity.this, AdminActivity.class);
         startActivity(intent);
         finish();
     }

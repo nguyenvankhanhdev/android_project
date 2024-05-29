@@ -102,8 +102,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 intent = Intent(this@LoginActivity, DashboardActivity::class.java)
             }
             intent.putExtra(Constants.USER_ROLE, user.role)
-
-
         }
         startActivity(intent)
         finish()

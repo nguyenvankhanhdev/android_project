@@ -69,6 +69,7 @@ public class FirestoreClass {
         return currentUserID;
     }
 
+
     public static void getUserDetails(Activity activity) {
         mFireStore.collection(Constants.USERS)
                 .document(getCurrentUserID())
@@ -542,9 +543,48 @@ public class FirestoreClass {
                     callback.onResult(null);
                 });
     }
+    public static void uploadImageToCloudStorage(final Activity activity, Uri imageFileURI, String imageType) {
+        StorageReference sRef = FirebaseStorage.getInstance().getReference().child(
+                imageType + System.currentTimeMillis() + "." + Constants.getFileExtension(activity, imageFileURI)
+        );
+
+        sRef.putFile(imageFileURI)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.e("Firebase Image URL", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                        taskSnapshot.getMetadata().getReference().getDownloadUrl()
+                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Log.e("Downloadable Image URL", uri.toString());
+
+                                        if (activity instanceof UserProfileActivity) {
+                                            ((UserProfileActivity) activity).imageUploadSuccess(uri.toString());
+                                        } else if (activity instanceof AddProductActivity) {
+                                            ((AddProductActivity) activity).imageUploadSuccess(uri.toString());
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        if (activity instanceof UserProfileActivity) {
+                            ((UserProfileActivity) activity).hideProgressDialog();
+                        } else if (activity instanceof AddProductActivity) {
+                            ((AddProductActivity) activity).hideProgressDialog();
+                        }
+
+                        Log.e(activity.getClass().getSimpleName(), exception.getMessage(), exception);
+                    }
+                });
+    }
 
     public interface Callback<T> {
         void onResult(T result);
+        void onCallback(T result);
     }
 
 

@@ -149,6 +149,11 @@ public class ProductDetailsActivity extends BaseActivity implements View.OnClick
                     }
                 });
             }
+
+            @Override
+            public void onCallback(String result) {
+
+            }
         });
 
         spinner_product_size.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

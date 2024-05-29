@@ -106,6 +106,14 @@ public class Product implements Parcelable {
     }
 
 
+    public Product(String s, String product_title, String price, String description, String mProductImageURL, String shoetypeid) {
+        this.product_id = s;
+        this.title = product_title;
+        this.price = price;
+        this.description = description;
+        this.image = mProductImageURL;
+        this.shoeTypeId=shoetypeid;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

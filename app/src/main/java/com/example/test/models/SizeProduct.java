@@ -12,7 +12,7 @@ public class SizeProduct implements Parcelable {
     public SizeProduct() {
     }
 
-    protected SizeProduct(Parcel in) {
+    public SizeProduct(Parcel in) {
         size_id = in.readString();
         size = in.readInt();
         quantity = in.readInt();

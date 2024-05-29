@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_products"
         android:name="com.example.test.ui.fragment.ProductsFragment"
-        android:label="@string/title_add_product"
+        android:label="Sản phẩm"
         tools:layout="@layout/fragment_products" />
 
     <fragment

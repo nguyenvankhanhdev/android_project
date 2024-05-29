@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.test.R
 import com.example.test.firestoreclass.FirestoreClass
 import com.example.test.firestoreclass.FirestoreClassKT
+import com.example.test.models.UserRole
+import com.example.test.utils.Constants
 
 @Suppress("DEPRECATION")
 class SplashActivity : AppCompatActivity() {
@@ -27,19 +29,23 @@ class SplashActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
-        Handler().postDelayed(
-            {
-                val currentUserID = FirestoreClass.getCurrentUserID()
-                if (currentUserID.isNotEmpty()) {
-                    startActivity(Intent(this@SplashActivity, DashboardActivity::class.java))
-                } else {
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+
+        Handler().postDelayed({
+            val currentUserID = FirestoreClass.getCurrentUserID()
+            if (currentUserID.isNotEmpty()) {
+                val sharedPreferences = getSharedPreferences(Constants.APP_PREFERENCES, MODE_PRIVATE)
+                val userRole = sharedPreferences.getString(Constants.USER_ROLE, null)
+
+                val intent = when (userRole) {
+                    UserRole.ADMIN.name -> Intent(this@SplashActivity, AdminActivity::class.java)
+                    UserRole.USER.name -> Intent(this@SplashActivity, DashboardActivity::class.java)
+                    else -> Intent(this@SplashActivity, LoginActivity::class.java)
                 }
-                finish()
-            },
-            1500
-        )
-
-
+                startActivity(intent)
+            } else {
+                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+            }
+            finish()
+        }, 1500)
     }
 }

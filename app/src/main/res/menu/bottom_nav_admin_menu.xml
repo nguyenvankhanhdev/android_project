@@ -8,7 +8,7 @@
     <item
         android:id="@+id/navigation_products"
         android:icon="@drawable/ic_vector_orders"
-        android:title="@string/title_orders" />
+        android:title="Sản phẩm" />
     <item
         android:id="@+id/navigation_user"
         android:icon="@drawable/ic_vector_account"

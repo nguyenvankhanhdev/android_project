@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.models.Product
 import com.example.test.ui.activities.EditProductActivity
+import com.example.test.ui.activities.EditProduct_KT
 import com.example.test.ui.activities.ProductDetailsActivity
 import com.example.test.ui.fragment.ProductsFragment
 import com.example.test.utils.ClothesTextView
