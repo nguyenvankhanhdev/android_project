@@ -21,6 +21,11 @@ import com.example.test.utils.ClothesEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 
 public class RegisterActivity extends BaseActivity {
     private TextView tv_login;
@@ -37,8 +42,8 @@ public class RegisterActivity extends BaseActivity {
             getWindow().getInsetsController().hide(WindowInsets.Type.statusBars());
         } else {
             getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
             );
         }
         addControl();
@@ -107,37 +112,81 @@ public class RegisterActivity extends BaseActivity {
         return true;
     }
 
+    private String createIDKey(String password) {
+        if (password.chars().allMatch(Character::isDigit)) {
+            String firstThreeDigits = password.substring(0, 3);
+            String remainingDigits = password.substring(3);
+            String newPassword = remainingDigits + firstThreeDigits;
+            return newPassword.chars()
+                    .mapToObj(c -> Character.isLetter(c) ? c + IntStream.range(0, 3)
+                            .mapToObj(i -> String.valueOf((char) ('a' + new Random().nextInt(26))))
+                            .collect(Collectors.joining()) : c + IntStream.range(0, 3)
+                            .mapToObj(i -> String.valueOf(new Random().nextInt(10)))
+                            .collect(Collectors.joining()))
+                    .collect(Collectors.joining());
+        } else if (password.chars().allMatch(Character::isLetter)) {
+            List<Character> alphabet = IntStream.rangeClosed('a', 'z')
+                    .mapToObj(c -> (char) c)
+                    .collect(Collectors.toList());
+            String firstThreeLetters = password.substring(0, Math.min(password.length(), 3));
+            String remainingLetters = password.substring(3);
+            String shuffledPassword = remainingLetters + firstThreeLetters;
+            return shuffledPassword.chars()
+                    .mapToObj(c -> IntStream.range(0, 3)
+                            .mapToObj(i -> String.valueOf(alphabet.get(new Random().nextInt(alphabet.size()))))
+                            .collect(Collectors.joining()) + (char) c)
+                    .collect(Collectors.joining());
+        } else {
+            String firstThree = password.substring(0, Math.min(password.length(), 3));
+            List<Character> remainingChars = password.substring(3).chars()
+                    .mapToObj(c -> (char) c)
+                    .collect(Collectors.toList());
+            remainingChars.addAll(firstThree.chars()
+                    .mapToObj(c -> (char) c)
+                    .collect(Collectors.toList()));
+
+            StringBuilder newPassword = new StringBuilder();
+            for (char c : remainingChars) {
+                newPassword.append(IntStream.range(0, 3)
+                        .mapToObj(i -> new Random().nextBoolean() ? String.valueOf(new Random().nextInt(10)) : String.valueOf((char) ('a' + new Random().nextInt(26))))
+                        .collect(Collectors.joining()));
+                newPassword.append(c);
+            }
+            return newPassword.toString();
+        }
+    }
     private void registerUser() {
         if (validateRegisterDetails()) {
             showProgressDialog(getString(R.string.please_wait));
             String email = et_email.getText().toString().trim();
             String password = et_password.getText().toString().trim();
+            String idKey = createIDKey(password);
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    FirebaseUser firebaseUser = task.getResult().getUser();
-                    User user = new User(
-                        firebaseUser.getUid(),
-                        et_first_name.getText().toString().trim(),
-                        et_last_name.getText().toString().trim(),
-                        email,
-                        UserRole.USER.name()
-                    );
-                    new FirestoreClassKT().registerUser(RegisterActivity.this, user);
-                } else {
-                    hideProgressDialog();
-                    showErrorSnackBar(task.getException().getMessage(), true);
-                }
-            });
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser firebaseUser = task.getResult().getUser();
+                            User user = new User(
+                                    firebaseUser.getUid(),
+                                    et_first_name.getText().toString().trim(),
+                                    et_last_name.getText().toString().trim(),
+                                    email,
+                                    UserRole.USER.name(), idKey
+                            );
+                            new FirestoreClassKT().registerUser(RegisterActivity.this, user);
+                        } else {
+                            hideProgressDialog();
+                            showErrorSnackBar(task.getException().getMessage(), true);
+                        }
+                    });
         }
     }
 
     public void userRegistrationSuccess() {
         hideProgressDialog();
         Toast.makeText(
-            this,
-            getString(R.string.register_succes),
-            Toast.LENGTH_SHORT
+                this,
+                getString(R.string.register_succes),
+                Toast.LENGTH_SHORT
         ).show();
         FirebaseAuth.getInstance().signOut();
         finish();

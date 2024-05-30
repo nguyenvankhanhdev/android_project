@@ -236,21 +236,16 @@ public class UsersFragment extends Fragment {
         StringBuilder result = new StringBuilder();
         int segmentLength = 4;
 
-        // Duyệt qua chuỗi theo từng đoạn có độ dài 4
         for (int i = 0; i < idKey.length(); i += segmentLength) {
-            // Lấy đoạn hiện tại
             String segment = idKey.substring(i, Math.min(idKey.length(), i + segmentLength));
 
-            // Giữ lại phần tử cuối cùng của đoạn hiện tại
             if (segment.length() > 0) {
                 result.append(segment.charAt(3));
             }
         }
 
-        // Chuyển kết quả thành chuỗi
         String resultString = result.toString();
 
-        // Nếu chuỗi kết quả có nhiều hơn 3 phần tử, lấy 3 phần tử cuối đưa lên đầu
         if (resultString.length() > 3) {
             String lastThree = resultString.substring(resultString.length() - 3);
             resultString = lastThree + resultString.substring(0, resultString.length() - 3);
@@ -279,11 +274,15 @@ public class UsersFragment extends Fragment {
     }
 
     private void deleteUser(String userEmailToDelete,String idKey) {
-        // Gọi hàm xóa người dùng từ FirestoreClass
 
+        if(idKey == null){
+            Toast.makeText(requireContext(), "Xóa người dùng thất bại", Toast.LENGTH_SHORT).show();
+        }
+        else{
+
+        }
         firestoreClassKT.deleteUserByEmail(userEmailToDelete,idKey, isSuccess -> {
             if (isSuccess) {
-                // Xóa thành công, cập nhật giao diện
                 userEmailList.remove(selectedPosition);
                 adapterList = new UsersListAdapter(requireActivity(), userEmailList, this);
 
@@ -292,7 +291,6 @@ public class UsersFragment extends Fragment {
                 rv_my_user_items.setAdapter(adapterList);
                 Toast.makeText(requireContext(), "Xóa người dùng thành công", Toast.LENGTH_SHORT).show();
             } else {
-                // Xóa thất bại, hiển thị thông báo
                 Toast.makeText(requireContext(), "Xóa người dùng thất bại", Toast.LENGTH_SHORT).show();
             }
             return null;

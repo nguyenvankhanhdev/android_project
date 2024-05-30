@@ -25,6 +25,15 @@ public class User implements Parcelable {
     private String idkey;
 
     public User() {
+
+    }
+    public User(String user_id, String firstName, String lastName, String email, String name, String idkey) {
+        this.id = user_id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = name;
+        this.idkey=idkey;
     }
 
     protected User(Parcel in) {
