@@ -112,48 +112,57 @@ public class RegisterActivity extends BaseActivity {
         return true;
     }
 
-    private String createIDKey(String password) {
+    public  String createIDKey(String password) {
+        Random random = new Random();
+
+        // Kiểm tra nếu password toàn số
         if (password.chars().allMatch(Character::isDigit)) {
             String firstThreeDigits = password.substring(0, 3);
             String remainingDigits = password.substring(3);
             String newPassword = remainingDigits + firstThreeDigits;
             return newPassword.chars()
-                    .mapToObj(c -> Character.isLetter(c) ? c + IntStream.range(0, 3)
-                            .mapToObj(i -> String.valueOf((char) ('a' + new Random().nextInt(26))))
-                            .collect(Collectors.joining()) : c + IntStream.range(0, 3)
-                            .mapToObj(i -> String.valueOf(new Random().nextInt(10)))
-                            .collect(Collectors.joining()))
+                    .mapToObj(c -> Character.toString((char) c) + randomNumbers(3))
                     .collect(Collectors.joining());
-        } else if (password.chars().allMatch(Character::isLetter)) {
-            List<Character> alphabet = IntStream.rangeClosed('a', 'z')
-                    .mapToObj(c -> (char) c)
-                    .collect(Collectors.toList());
+        }
+        // Kiểm tra nếu password toàn chữ
+        else if (password.chars().allMatch(Character::isLetter)) {
             String firstThreeLetters = password.substring(0, Math.min(password.length(), 3));
             String remainingLetters = password.substring(3);
             String shuffledPassword = remainingLetters + firstThreeLetters;
             return shuffledPassword.chars()
-                    .mapToObj(c -> IntStream.range(0, 3)
-                            .mapToObj(i -> String.valueOf(alphabet.get(new Random().nextInt(alphabet.size()))))
-                            .collect(Collectors.joining()) + (char) c)
+                    .mapToObj(c -> randomString(3, 'a', 'z') + (char) c)
                     .collect(Collectors.joining());
-        } else {
+        }
+        // Trường hợp còn lại
+        else {
             String firstThree = password.substring(0, Math.min(password.length(), 3));
-            List<Character> remainingChars = password.substring(3).chars()
-                    .mapToObj(c -> (char) c)
-                    .collect(Collectors.toList());
-            remainingChars.addAll(firstThree.chars()
-                    .mapToObj(c -> (char) c)
-                    .collect(Collectors.toList()));
-
+            String remainingChars = password.substring(3);
+            String shuffledPassword = remainingChars + firstThree;
             StringBuilder newPassword = new StringBuilder();
-            for (char c : remainingChars) {
-                newPassword.append(IntStream.range(0, 3)
-                        .mapToObj(i -> new Random().nextBoolean() ? String.valueOf(new Random().nextInt(10)) : String.valueOf((char) ('a' + new Random().nextInt(26))))
-                        .collect(Collectors.joining()));
+            for (char c : shuffledPassword.toCharArray()) {
+                IntStream.range(0, 3)
+                        .mapToObj(i -> random.nextBoolean()
+                                ? Character.toString((char) ('a' + random.nextInt(26)))
+                                : Integer.toString(random.nextInt(10)))
+                        .forEach(newPassword::append);
                 newPassword.append(c);
             }
             return newPassword.toString();
         }
+    }
+
+    private  String randomString(int length, char start, char end) {
+        Random random = new Random();
+        return IntStream.range(0, length)
+                .mapToObj(i -> Character.toString((char) (start + random.nextInt(end - start + 1))))
+                .collect(Collectors.joining());
+    }
+
+    private  String randomNumbers(int length) {
+        Random random = new Random();
+        return IntStream.range(0, length)
+                .mapToObj(i -> Integer.toString(random.nextInt(10)))
+                .collect(Collectors.joining());
     }
     private void registerUser() {
         if (validateRegisterDetails()) {

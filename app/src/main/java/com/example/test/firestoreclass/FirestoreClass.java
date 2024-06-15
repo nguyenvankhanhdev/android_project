@@ -17,6 +17,8 @@ import com.example.test.models.Address;
 import com.example.test.models.Cart;
 import com.example.test.models.Order;
 import com.example.test.models.Product;
+import com.example.test.models.ProductQuantity;
+import com.example.test.models.Product_KT;
 import com.example.test.models.SizeProduct;
 import com.example.test.models.SoldProduct;
 import com.example.test.models.User;
@@ -35,8 +37,11 @@ import com.example.test.ui.fragment.OrdersFragment;
 import com.example.test.ui.fragment.ProductsFragment;
 import com.example.test.ui.fragment.SoldProductsFragment;
 import com.example.test.utils.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.integrity.internal.o;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -50,6 +55,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -581,10 +588,50 @@ public class FirestoreClass {
                     }
                 });
     }
+    public interface FirestoreSLCallback {
+        void onCallback(int totalQuantity);
+    }
+    public void getSLTungSP(String productID, FirestoreSLCallback callback) {
+        FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
+
+        mFireStore.collection(Constants.ORDERS)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot documents) {
+                        int totalQuantity = 0;
+                        for (DocumentSnapshot document : documents) {
+                            Order order = document.toObject(Order.class);
+                            if (order != null && order.getItems() != null) {
+                                for (Cart item : order.getItems()) {
+                                    if (item.getProduct_id().equals(productID)) {
+                                        totalQuantity += Integer.parseInt(item.getCart_quantity());
+                                    }
+                                }
+                            }
+                        }
+                        callback.onCallback(totalQuantity);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("FirestoreClass", "Error getting documents: ", e);
+                        callback.onCallback(0);
+                    }
+                });
+    }
+    public interface BestSellerCallback {
+        void onCallback(List<Product> bestSellers);
+    }
+
+
 
     public interface Callback<T> {
         void onResult(T result);
         void onCallback(T result);
+
+
     }
 
 

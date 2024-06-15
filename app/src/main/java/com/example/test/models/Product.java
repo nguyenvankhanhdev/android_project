@@ -10,6 +10,16 @@ public class Product implements Parcelable {
     private String description;
     private String image;
 
+    public int getSalesCount() {
+        return salesCount;
+    }
+
+    public void setSalesCount(int salesCount) {
+        this.salesCount = salesCount;
+    }
+
+    private int salesCount;
+
 
 
     private String shoeTypeId;

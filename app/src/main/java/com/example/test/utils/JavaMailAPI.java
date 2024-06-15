@@ -32,7 +32,7 @@ public class JavaMailAPI extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         final String username = "vuongtran975@gmail.com";
-        final String password = "Mật khẩu ứng dụng";
+        final String password = "flco mtdx nwhc mcyy";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

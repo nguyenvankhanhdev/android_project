@@ -8,7 +8,7 @@ public class User implements Parcelable {
     private String firstName;
     private String lastName;
     private String email;
-    private String image;
+    private String image = "";
     private long mobile;
     private String gender;
     private String role;

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
 import com.example.test.models.Product;
+import com.example.test.models.ProductQuantity;
 import com.example.test.utils.GlideLoader;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class DashboardItemsListAdapter extends RecyclerView.Adapter<RecyclerView
     private final Context context;
     private ArrayList<Product> list;
     ArrayList<Product> products = new ArrayList<>();
+    private ArrayList<ProductQuantity> list1;
+    ArrayList<ProductQuantity> products1 = new ArrayList<>();
 
     private OnClickListener onClickListener;
 
@@ -30,6 +33,11 @@ public class DashboardItemsListAdapter extends RecyclerView.Adapter<RecyclerView
         this.context = context;
         this.list = list;
         this.products = list;
+    }
+    public DashboardItemsListAdapter(Context context, ArrayList<ProductQuantity> list1, int a) {
+        this.context = context;
+        this.list1 = list1;
+        a = 1;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {

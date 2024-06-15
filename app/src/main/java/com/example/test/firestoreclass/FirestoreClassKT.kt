@@ -762,6 +762,7 @@ class FirestoreClassKT {
                 callback.onCallback(0) // Trả về 0 khi thất bại
             }
     }
+
     fun getUsersInfo(callback: (List<User>) -> Unit) {
         mFireStore.collection(Constants.USERS)
             .get()

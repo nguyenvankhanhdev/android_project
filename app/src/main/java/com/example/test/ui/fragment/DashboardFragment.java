@@ -32,9 +32,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
 import com.example.test.databinding.FragmentDashboardBinding;
+import com.example.test.firestoreclass.FirestoreClass;
 import com.example.test.firestoreclass.FirestoreClassKT;
+import com.example.test.models.Cart;
+import com.example.test.models.Order;
 import com.example.test.models.Price;
 import com.example.test.models.Product;
+import com.example.test.models.ProductQuantity;
 import com.example.test.models.Type;
 import com.example.test.ui.activities.CartListActivity;
 import com.example.test.ui.activities.LoginActivity;
@@ -57,16 +61,23 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class DashboardFragment extends BaseFragment {
     private static final FirebaseFirestore mFireStore = FirebaseFirestore.getInstance();
     private FragmentDashboardBinding _binding;
     private RecyclerView rv_dashboard_items;
+    private RecyclerView rv_dashboard_items_hot;
+    private RecyclerView rv_dashboard_items_bestseller;
     private TextView tv_no_dashboard_items_found;
+    private TextView txt_list;
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private boolean isToggleOn = false;
     private DashboardItemsListAdapter adapter;
+    private DashboardItemsListAdapter adapterBestSeller;
+    private DashboardItemsListAdapter adapterHot;
     private SearchView searchView;
     private Spinner spinner_price;
     private Spinner spinner_type;
@@ -75,9 +86,77 @@ public class DashboardFragment extends BaseFragment {
     private ArrayList<Price> prices = new ArrayList<>();
     private ArrayList<Type> typeList = new ArrayList<>();
     private FirebaseFirestore db;
-    private ArrayList<String> listNameType = new ArrayList<>();
+    private ArrayList<ProductQuantity> productQuantities = new ArrayList<>();
+    private List<String> productNames = new ArrayList<>();
+    private ArrayList<Product> productBestSeller = new ArrayList<>();
+    public ArrayList<Product> getBestSeller() {
+        ArrayList<Product> products = new ArrayList<>();
+        ArrayList<Order> orders = new ArrayList<>();
+        ArrayList<Product> productsReturn = new ArrayList<>();
 
 
+        mFireStore.collection("products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot document) {
+                        for (DocumentSnapshot i : document.getDocuments()) {
+                            Product product = i.toObject(Product.class);
+                            if (product != null) {
+                                product.setProduct_id(i.getId());
+                                products.add(product);
+                            }
+                        }
+                    }
+                });
+        mFireStore.collection("orders")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot document) {
+                        for (DocumentSnapshot i : document.getDocuments()) {
+                            Order order = i.toObject(Order.class);
+                            if (order != null) {
+                                order.setId(i.getId());
+                                List<HashMap<String, Object>> items = (List<HashMap<String, Object>>) i.get("items");
+                                ArrayList<Cart> carts = new ArrayList<>();
+
+                                for (HashMap<String, Object> item : items) {
+                                    Cart cart = new Cart();
+                                    cart.setProduct_id((String) item.get("product_id"));
+                                    cart.setTitle((String)item.get("title"));
+                                    carts.add(cart);
+                                }
+
+                                for (Cart cart : carts) {
+                                    for (Product product : products) {
+                                        for (ProductQuantity productQuantity : productQuantities){
+                                            int soLuong = 0;
+                                            if(productQuantity.getProductName().equals(product.getTitle())){
+                                                soLuong += productQuantity.getTotalQuantity();
+                                            }
+                                            else{
+                                                soLuong = productQuantity.getTotalQuantity();
+                                            }
+                                            productQuantities.add(new ProductQuantity(product.getTitle(), soLuong));
+                                        }
+                                    }
+                                }
+                                orders.add(order);
+                            }
+                        }
+                    }
+                });
+
+        for (int i = 0; i < 6; i++){
+            for (Product product : products){
+                if(product.getTitle() == productQuantities.get(i).getProductName()){
+                    productsReturn.add(product);
+                }
+            }
+        }
+        return productsReturn;
+    }
 
     private void fetchTypeNamesFromFirestore() {
         typeList.add(new Type("-1", "Chọn"));
@@ -230,11 +309,17 @@ public class DashboardFragment extends BaseFragment {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = _binding.getRoot();
         rv_dashboard_items = root.findViewById(R.id.rv_dashboard_items);
+        rv_dashboard_items_hot = root.findViewById(R.id.rv_dashboard_items_hot);
+        rv_dashboard_items_bestseller = root.findViewById(R.id.rv_dashboard_items_bestseller);
         tv_no_dashboard_items_found = root.findViewById(R.id.tv_no_dashboard_items_found);
         drawerLayout = root.findViewById(R.id.drawer_layout);
         navView = root.findViewById(R.id.nav_view);
         spinner_price = root.findViewById(R.id.spinner_price);
         spinner_type = root.findViewById(R.id.spinner_type);
+
+
+        productBestSeller = getBestSeller();
+
 
         typeList.clear();
         db = FirebaseFirestore.getInstance();
@@ -257,6 +342,8 @@ public class DashboardFragment extends BaseFragment {
                 selectedPricePosition[0] = position;
                 String selectedTypeID = typeList.get(selectedTypePosition[0]).getTypeID();
                 sortTheoDieuKien(selectedPricePosition[0], selectedTypeID);
+                rv_dashboard_items_hot.setVisibility(View.GONE);
+                rv_dashboard_items_bestseller.setVisibility(View.GONE);
             }
 
             @Override
@@ -270,6 +357,8 @@ public class DashboardFragment extends BaseFragment {
                 selectedTypePosition[0] = position;
                 String selectedTypeID = typeList.get(selectedTypePosition[0]).getTypeID();
                 sortTheoDieuKien(selectedPricePosition[0], selectedTypeID);
+                rv_dashboard_items_hot.setVisibility(View.GONE);
+                rv_dashboard_items_bestseller.setVisibility(View.GONE);
             }
 
             @Override
@@ -465,15 +554,44 @@ public class DashboardFragment extends BaseFragment {
         new FirestoreClassKT().getDashboardItemsList(this);
     }
 
+    public ArrayList<ProductQuantity> getTop5Products() {
+        ArrayList<ProductQuantity> sortedProducts = new ArrayList<>(productQuantities);
+        Collections.sort(sortedProducts, new Comparator<ProductQuantity>() {
+            @Override
+            public int compare(ProductQuantity o1, ProductQuantity o2) {
+                return Integer.compare(o2.getTotalQuantity(), o1.getTotalQuantity());
+            }
+        });
+
+        ArrayList<ProductQuantity> top5Products = new ArrayList<>();
+        for (int i = 0; i < Math.min(5, sortedProducts.size()); i++) {
+            top5Products.add(sortedProducts.get(i));
+        }
+
+        return top5Products;
+    }
     public void successDashboardItemsList(ArrayList<Product> dashboardItemsList) {
         hideProgressDialog();
         if (dashboardItemsList.size() > 0) {
             rv_dashboard_items.setVisibility(View.VISIBLE);
+            rv_dashboard_items_bestseller.setVisibility(View.VISIBLE);
+            rv_dashboard_items_hot.setVisibility(View.VISIBLE);
             tv_no_dashboard_items_found.setVisibility(View.GONE);
             rv_dashboard_items.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            rv_dashboard_items.setHasFixedSize(true);
+            rv_dashboard_items_bestseller.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            rv_dashboard_items_hot.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+            //rv_dashboard_items.setHasFixedSize(true);
             adapter = new DashboardItemsListAdapter(requireActivity(), dashboardItemsList);
+            adapterBestSeller = new DashboardItemsListAdapter(requireActivity(), productBestSeller);
             rv_dashboard_items.setAdapter(adapter);
+            rv_dashboard_items_bestseller.setAdapter(adapterBestSeller);
+            rv_dashboard_items_hot.setAdapter(adapter);
+            adapterBestSeller.setOnClickListener((position, productBestSeller) -> {
+                Intent intent = new Intent(getContext(), ProductDetailsActivity.class);
+                intent.putExtra(Constants.EXTRA_PRODUCT_ID, productBestSeller.getProduct_id());
+                startActivity(intent);
+            });
             adapter.setOnClickListener((position, product) -> {
                 Intent intent = new Intent(getContext(), ProductDetailsActivity.class);
                 intent.putExtra(Constants.EXTRA_PRODUCT_ID, product.getProduct_id());
@@ -483,5 +601,8 @@ public class DashboardFragment extends BaseFragment {
             rv_dashboard_items.setVisibility(View.GONE);
             tv_no_dashboard_items_found.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void productBestSeller(FirestoreClass.BestSellerCallback bestSeller) {
     }
 }
